@@ -1,0 +1,1072 @@
+void() precaches;
+.float timeflyc;
+.float vhud;
+void() main = {};
+//void() SetNewParms = {};
+//void() SetChangeParms = {};
+void() check_itemsize;
+void() check_itemflash;
+void()check_itemsigil_flash;
+void() check_coffer;
+void() check_attar;
+void() check_itemlight;
+void() check_itemammount;
+void() check_enemies_frik;
+void() Precache;
+void() check_tether;
+void()check_maxammo;
+.float message_number;
+void() CSQC_AddStats = 
+{ 
+	SV_AddStatFloat(STAT_RMENU, 8, rmenu);
+	SV_AddStatFloat(STAT_LF, 8, lf);
+	SV_AddStatFloat(STAT_RARM, 8, rarmorvalue);
+	SV_AddStatFloat(STAT_DARM, 8, darmorvalue);
+	SV_AddStatFloat(STAT_AMMO_CANNON, 8, ammo_cannon);
+	SV_AddStatFloat(STAT_AMMO_BOMBS, 8, ammo_retcher);
+	SV_AddStatFloat(STAT_AMMO_REVOLVER, 8, ammo_revolver);
+	SV_AddStatFloat(STAT_AMMO_FLAMETHROWER, 8, ammo_spitter);
+	SV_AddStatFloat(STAT_AMMO_SHOTGUN, 8, ammo_shotgun);
+	SV_AddStatFloat(STAT_AMMO_LANCE, 8, ammo_lance);
+	SV_AddStatFloat(STAT_AMMO_CRYSTAL, 8, ammo_crystal);
+	SV_AddStatFloat(STAT_AMMO_MACE, 8, ammo_bfg);
+
+
+	SV_AddStatFloat(STAT_RD_ST, 8, SoulTether);
+
+	SV_AddStatFloat(STAT_RD_MR, 8, MarkRevelation);
+	SV_AddStatFloat(STAT_RD_DA, 8, DrownerApp);
+	SV_AddStatFloat(STAT_RD_BE, 8, flaskrage);
+	SV_AddStatFloat(STAT_RD_CA, 8, Attar);
+	SV_AddStatFloat(STAT_RD_VG, 8, BlackGrenade);
+	SV_AddStatFloat(STAT_RD_LS, 8, LifeSiphon);
+	SV_AddStatFloat(STAT_RD_TR, 8, TrinketofRespite);
+	SV_AddStatFloat(STAT_RD_AE, 8, Aegis);
+	SV_AddStatFloat(STAT_RD_VI, 8, ViciousIdol);
+	SV_AddStatFloat(STAT_RD_RF, 8, ShockWave);
+
+
+	SV_AddStatFloat(STAT_RADIALACTIVE, 8, radialactive);
+	SV_AddStatFloat(STAT_ARTIFACTTIME, 8, artifacttime);
+	SV_AddStatFloat(STAT_TETHERTIME, 8, tethertime);
+	SV_AddStatFloat(STAT_VWEAPONFRAME, 8, vweaponframe);
+	SV_AddStatFloat(STAT_WRATHDEBUGSCREEN, 8, wrath_debug_screen);
+	SV_AddStatFloat(STAT_ENHEALTH, 8, enhealth);
+	SV_AddStatFloat(STAT_ENFRAME, 8, enframe);
+	SV_AddStatFloat(STAT_TIMEFLY, 8, timeflyc);
+	SV_AddStatFloat(STAT_TIMELS, 8, timels);
+	SV_AddStatFloat(STAT_THWOFG, 8, vhud);
+	SV_AddStatFloat(STAT_WRATHACTIVE, 8, wrath_active);
+
+
+	SV_AddStatFloat(STAT_JOURNAL, 8, journal);
+	SV_AddStatFloat(STAT_JOURNAL_MESSAGES, 8, journal_jmessages);
+	SV_AddStatFloat(STAT_JOURNAL_MESSAGESB, 8, journal_jmessagesb);
+	SV_AddStatFloat(STAT_JOURNAL_MESSAGESM, 8, journal_jmessagesm);
+
+	SV_AddStatFloat(STAT_NORMAL_MESSAGES, 8, message_number);
+	SV_AddStatFloat(STAT_VWEAPONSTATE, 8, vweaponstate);
+	SV_AddStatFloat(STAT_LASTWEAPON, 8, lastweapon);
+	SV_AddStatFloat(STAT_DEADMENU, 8, deadmenuflag);
+	SV_AddStatFloat(STAT_DAMAGESCREEN, 8, damagescreen);
+	SV_AddStatFloat(STAT_CROSSHAIR, 8, crosshairflag);
+	SV_AddStatFloat(STAT_SHRINE, 8, shrine);
+	SV_AddStatFloat(STAT_TETHER, 8, tetherhasmodel);
+	SV_AddStatFloat(STAT_RELICS, 8, relics);
+	SV_AddStatFloat(STAT_SLOT_KEYS, 8, slot_keys);
+	SV_AddStatFloat(STAT_TIME_HUDMESSAGE, 8, stat_time_hudmessage);
+	SV_AddStatFloat(STAT_SPOTTED_MAPS, 8, spotted_maps);
+	SV_AddStatFloat(STAT_USED_RELICS, 8, oldrelics);
+	SV_AddStatFloat(STAT_FOUND_RELICS, 8, foundedrelics);
+
+	SV_AddStatFloat(CAM_ORG_X, 8, cam_org_x);
+	SV_AddStatFloat(CAM_ORG_Y, 8, cam_org_y);
+	SV_AddStatFloat(CAM_ORG_Z, 8, cam_org_z);
+	SV_AddStatFloat(CAM_ANG_X, 8, cam_ang_x);
+	SV_AddStatFloat(CAM_ANG_Y, 8, cam_ang_y);
+	SV_AddStatFloat(CAM_ANG_Z, 8, cam_ang_z);
+
+	SV_AddStatFloat(STAT_SATURATION, 8, r_saturation);
+	SV_AddStatFloat(STAT_HEALTHHAZE, 8, r_healthhaze);
+	SV_AddStatFloat(STAT_ZOOM, 8, r_zoom);
+
+	SV_AddStatFloat(STAT_ENDSCREENSTART, 8, r_endscreen);
+};
+
+void(entity client, string s) centerprint = {
+	float msg_type = MSG_ALL;
+	if (client != world)
+		msg_type = MSG_ONE;
+	msg_entity = client;
+
+	WriteByte(msg_type, SVC_TEMPENTITY);
+	WriteByte(msg_type, TEMPENT::CENTERPRINT);
+	WriteString(msg_type, s);
+}
+
+entity lastspawn;
+.float episode;
+
+void() worldspawn = 
+{ 
+	lastspawn = world;
+	skill = cvar("skill");
+
+
+
+
+	if(!(world.episode))
+	{
+	if ((self.model == "maps/intro.bsp") || (self.model == "maps/hub1.bsp") || (self.model == "maps/e1m1.bsp") ||
+(self.model == "maps/e1m2.bsp") || (self.model == "maps/e1m3.bsp")|| (self.model == "maps/e1m4.bsp")|| (self.model == "maps/e1m5.bsp")|| (self.model == "maps/boss1.bsp"))
+	world.episode = 1;
+	else if ( (self.model == "maps/hub2.bsp") || (self.model == "maps/e2m1.bsp") ||
+(self.model == "maps/e2m2.bsp") || (self.model == "maps/e2m3.bsp")|| (self.model == "maps/e2m4.bsp")|| (self.model == "maps/e2m5.bsp")|| (self.model == "maps/boss2.bsp")|| (self.model == "maps/urns2.bsp"))
+	world.episode = 2;
+	else if ( (self.model == "maps/hub3.bsp") || (self.model == "maps/e3m1.bsp") ||
+(self.model == "maps/e3m2.bsp") || (self.model == "maps/e3m3.bsp")|| (self.model == "maps/e3m4.bsp")|| (self.model == "maps/e3m5.bsp")|| (self.model == "maps/boss3.bsp"))
+	world.episode = 3;
+	}
+
+	if(!(world.episode))
+		world.episode = 1;
+	
+	// Reki (February 14 2024): keep track of our up-to-date save
+	// compatibility versions, we'll need to fix stuff if this changes
+	map_save_version = world.map_version;
+	prog_save_version = PROG_SAVE_VERSION;
+	world.prog_version = PROG_SAVE_VERSION;
+	//
+
+	//Precache();
+	check_enemies_frik();
+	check_itemammount();
+	check_itemflash();
+	check_itemsigil_flash();
+	check_itemsize();
+	check_coffer();
+	check_attar();
+	check_shockwave();
+	check_itemlight();
+	check_maxammo();
+	float noqcprecaches = cvar("cl_noqcprecache");	
+	if(noqcprecaches != 1)
+	precaches();
+	CSQC_AddStats();
+	//	check_tether();
+	globalfake_illumination = 1;
+	//
+	// Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
+	//
+	// 0 normal
+	lightstyle(0, "m");
+
+	// 1 FLICKER (first variety)
+	lightstyle(1, "mmnmmommommnonmmonqnmmo");
+
+	// 2 SLOW STRONG PULSE
+	lightstyle(2, "abcdefghijklmnopqrstuvwxyzyxwvutsrqponmlkjihgfedcba");
+
+	// 3 CANDLE (first variety)
+	lightstyle(3, "mmmmmaaaaammmmmaaaaaabcdefgabcdefg");
+
+	// 4 FAST STROBE
+	lightstyle(4, "mamamamamama");
+
+	// 5 GENTLE PULSE 1
+	lightstyle(5, "jklmnopqrstuvwxyzyxwvutsrqponmlkj");
+
+	// 6 FLICKER (second variety)
+	lightstyle(6, "nmonqnmomnmomomno");
+
+	// 7 CANDLE (second variety)
+	lightstyle(7, "mmmaaaabcdefgmmmmaaaammmaamm");
+
+	// 8 CANDLE (third variety)
+	lightstyle(8, "mmmaaammmaaammmabcdefaaaammmmabcdefmmmaaaa");
+
+	// 9 SLOW STROBE (fourth variety)
+	lightstyle(9, "aaaaaaaazzzzzzzz");
+
+	// 10 FLUORESCENT FLICKER
+	lightstyle(10, "mmamammmmammamamaaamammma");
+
+	// 11 SLOW PULSE NOT FADE TO BLACK
+	lightstyle(11, "abcdefghijklmnopqrrqponmlkjihgfedcba");
+
+	// 12 LIGHTNING
+	lightstyle(12, "a");
+
+	lightstyle(13, "a");
+
+	lightstyle(14, "a");
+
+	lightstyle(16, "a");
+
+	lightstyle(17, "mmnmmommommnonmmonqnmmo");
+
+	lightstyle(18, "mmnmmommommnonmmonqnmmo");
+
+	lightstyle(19, "mmnmmommommnonmmonqnmmo");
+
+
+	// styles 32-62 are assigned by the light program for switchable lights
+
+	// 63 testing
+	lightstyle(63, "a");
+};
+
+void Timescale_RunFrame(void);
+void StartFrame()
+{
+	Timescale_RunFrame();
+}
+
+void() precache_monster_afflicted;
+void() precache_monster_brute;
+void() precache_monster_heretic;
+void() precache_monster_fallen;
+void() precache_monster_stricken;
+void() precache_monster_wraith;
+void() precache_monster_afflicted;
+void() precache_monster_invader;
+void() precache_monster_executioner;
+void() precache_monster_oppressor;
+void() precache_monster_widow;
+void() precache_monster_wretch;
+void() precache_monster_symbol;
+void() precache_monster_lurker;
+void() precache_monster_prowler;
+void() precache_monster_boss1;
+void() precache_monster_keeper;
+
+void() precaches = 
+{ 
+
+
+
+	
+	
+	
+	//	precache_model ("models/items/glyph_blue.md3");
+	//	precache_model ("models/items/glyph_red.md3");
+	//	precache_model ("models/items/glyph_yellow.md3");
+	//	precache_model ("models/items/life_heart.spr");
+	//	precache_model ("models/items/manuscript.md3");
+	//	precache_model ("models/items/relic.md3");
+	//	precache_model ("models/objects/switch1.md3");
+	//	precache_sound ("env/rain.wav");
+	//	precache_sound ("objects/sigil_flight.ogg");
+	//	precache_sound ("weapons/cannon/dryfire.ogg");
+	//	precache_sound ("weapons/cannon/inspect.ogg");
+	//	precache_sound ("weapons/cannon/lower.ogg");
+	//	precache_sound ("weapons/cannon/raise.ogg");
+	//precache_model ("models/fx/tether.spr");
+	//precache_model ("models/items/manuscript.md3" );
+	//precache_model ("models/weapons/cannon/w_cannon.md3");
+	precache_model ("models/player/outlander/head.md3");
+	precache_model ("models/player/outlander/lower.md3");
+	precache_model ("models/player/outlander/upper.md3");
+	precache_model ("models/artifacts/active/flask_active.md3");
+	precache_model ("models/artifacts/active/life_siphon_active.md3");
+	precache_model ("models/artifacts/active/sigil_flight_active.md3"); //
+	precache_model ("models/artifacts/active/soul_tether_active.md3");
+	precache_model ("models/artifacts/active/sigil_wrath_active.md3");
+	precache_model ("models/artifacts/artifact_animus_proj.md3");
+	precache_model ("models/artifacts/artifact_revelation.md3");
+	precache_model ("models/artifacts/artifact_apparatus.md3");
+	precache_model ("models/artifacts/artifact_rage.md3");
+	precache_model ("models/artifacts/artifact_attar.md3");
+	precache_model ("models/artifacts/artifact_grenade.md3");
+	precache_model ("models/artifacts/artifact_siphon.md3");
+	precache_model ("models/artifacts/artifact_deflection.md3");
+	precache_model ("models/artifacts/artifact_aegis.md3");
+	precache_model ("models/artifacts/artifact_animus.md3");
+	precache_model ("models/artifacts/artifact_shockwave.md3");
+	precache_model ("models/artifacts/artifact_apparatus.md3");
+	precache_model ("models/artifacts/artifact_apparatus.md3");
+	precache_model ("models/artifacts/artifact_apparatus.md3");
+	precache_model ("models/artifacts/artifact_apparatus.md3");
+	precache_model ("models/artifacts/artifact_apparatus.md3");
+	precache_model ("models/artifacts/confounding_attar.md3");
+	precache_model ("models/artifacts/confounding_attar.md3");
+
+	precache_model ("models/artifacts/cruel_aegis.md3");
+	precache_model ("models/artifacts/drowners_apparatus.md3");
+	precache_model ("models/artifacts/effects/confounding_attar_cloud.md3 " );
+	precache_model ("models/artifacts/effects/confounding_attar_cloud.md3");
+	precache_model ("models/artifacts/effects/confounding_attar_enemy.md3");
+	precache_model ("models/artifacts/effects/confounding_attar_proj.md3");
+	precache_model ("models/artifacts/effects/life_siphon_heretic.md3");
+	precache_model ("models/artifacts/effects/life_siphon_humanoid.md3");
+	precache_model ("models/artifacts/effects/life_siphon_stricken.md3");
+	precache_model ("models/artifacts/effects/life_siphon_wraith.md3");
+	precache_model ("models/artifacts/effects/orb_blackhole.md3");
+	precache_model ("models/artifacts/effects/orb_deflection.md3");
+	precache_model ("models/artifacts/effects/orb_deflection.md3");
+	precache_model ("models/artifacts/effects/orb_deflection.md3");
+	precache_model ("models/artifacts/effects/orb_deflection.md3");
+	precache_model ("models/artifacts/effects/orb_deflection.md3");
+	precache_model ("models/artifacts/effects/orb_deflection.md3");
+	precache_model ("models/artifacts/effects/orb_shockwave1.md3");
+	precache_model ("models/artifacts/effects/orb_shockwave2.md3");
+	precache_model ("models/artifacts/effects/revelation.md3");
+	precache_model ("models/artifacts/effects/revelation_blur.md3");
+	precache_model ("models/artifacts/effects/trinket_dome.md3");
+	precache_model ("models/artifacts/grenade.md3");
+	precache_model ("models/artifacts/life_siphon.md3");
+	precache_model ("models/artifacts/mark_flame.md3");
+	precache_model ("models/artifacts/orb_grenade.md3");
+	precache_model ("models/artifacts/soul_marker.md3");
+	precache_model ("models/artifacts/soul_marker.md3");
+	precache_model ("models/artifacts/soul_tether.md3");
+	precache_model ("models/artifacts/trinket_of_reflection.md3");
+	precache_model ("models/artifacts/vicious_animus.md3");
+	precache_model ("models/blackgrenade.md3");
+	precache_model ("models/dev/gizmo.md3");
+	precache_model ("models/dev/node.md3");
+	precache_model ("models/dev/sphere.md3");
+	precache_model ("models/dev/spherebig.md3");
+	precache_model ("models/enemies/incisor/incisor_spike.md3" );	precache_model ("models/artifacts/active/cruel_aegis_active.md3");
+	precache_model ("models/enemies/lurker/lurker.md3");
+	precache_model ("models/fx/tether.spr");
+	precache_model ("models/gibs/gib_large.md3");
+	precache_model ("models/gibs/gib_med.md3");
+	precache_model ("models/gibs/gib_small.md3");
+	precache_model ("models/items/ammo_cannon.md3");
+	precache_model ("models/items/ammo_crystal.md3");
+	precache_model ("models/items/ammo_invader.md3");
+	precache_model ("models/items/ammo_lance.md3");
+	precache_model ("models/items/ammo_retcher.md3");
+	precache_model ("models/items/ammo_revolver.md3");
+	precache_model ("models/items/ammo_shotgun.md3");
+	precache_model ("models/items/ammo_spitter.md3");
+	precache_model ("models/items/ammo_spitter_drop.md3");
+	precache_model ("models/items/armor.md3");
+	precache_model ("models/items/armor_dark.md3");
+	precache_model ("models/items/armor_shard.md3");
+	precache_model ("models/items/armor_shard_dark.md3");
+	precache_model ("models/items/coffer_key1.md3");
+	precache_model ("models/items/glyph_blue.md3");
+	precache_model ("models/items/glyph_red.md3");
+	precache_model ("models/items/glyph_yellow.md3");
+	precache_model ("models/items/helm.md3");
+	precache_model ("models/items/helm_dark.md3");
+	precache_model ("models/items/lances.md3");
+	precache_model ("models/items/life_heart.spr");
+	precache_model ("models/items/lifeblood_beaker.md3");
+	precache_model ("models/items/lifeblood_chalice.md3");
+	precache_model ("models/items/lifeblood_vial.md3");
+	precache_model ("models/items/manuscript.md3");
+	precache_model ("models/items/relic.md3");
+	precache_model ("models/items/shells.md3");
+	precache_model ("models/items/slugs.md3");
+	precache_model ("models/keys/key_1_coffer.md3");
+	precache_model ("models/keys/key_2_coffer.md3");
+	precache_model ("models/keys/key_3_coffer.md3");
+	precache_model ("models/keys/key_1_blue.md3");
+	precache_model ("models/keys/key_2_blue.md3");
+	precache_model ("models/keys/key_3_blue.md3");
+	precache_model ("models/keys/key_1_red.md3");
+	precache_model ("models/keys/key_2_red.md3");
+	precache_model ("models/keys/key_3_red.md3");
+	precache_model ("models/keys/key_1_yellow.md3");
+	precache_model ("models/keys/key_2_yellow.md3");
+	precache_model ("models/keys/key_3_yellow.md3");
+	precache_model ("models/misc/null.md3");
+	precache_model ("models/objects/coffers/coffer1_collision.md3");
+	precache_model ("models/objects/coffers/coffer1_locked.md3");
+	precache_model ("models/objects/decor/crystals/crystal_small.md3");
+	precache_model ("models/objects/switch1.md3");
+	precache_model ("models/objects/teleporters/teleporter.md3");
+	precache_model ("models/player/footstep.md3");
+	precache_model ("models/players/outlander/player.md3");
+	precache_model ("models/projectiles/beam_crystal.md3");
+	precache_model ("models/projectiles/beam_crystala.md3");
+	precache_model ("models/projectiles/beam_crystalb.md3");
+	precache_model ("models/projectiles/beam_crystalc.md3");
+	precache_model ("models/projectiles/beam_crystald.md3");
+	precache_model ("models/projectiles/beam_crystale.md3");
+	precache_model ("models/projectiles/boibeama.md3");
+	precache_model ("models/projectiles/boibeamb.md3");
+	precache_model ("models/projectiles/proj_beam.md3");
+	precache_model ("models/projectiles/proj_crystal.md3");
+	precache_model ("models/projectiles/proj_crystaliser.md3");
+	precache_model ("models/projectiles/proj_crystalisera.md3");
+	precache_model ("models/projectiles/proj_crystaliserb.md3");
+	precache_model ("models/projectiles/proj_cyst.md3");
+	precache_model ("models/projectiles/proj_cyst.md3");
+	precache_model ("models/projectiles/proj_fang1.md3");
+	precache_model ("models/projectiles/proj_fang2.md3");
+	precache_model ("models/projectiles/proj_oppressor.md3");
+	precache_model ("models/projectiles/proj_oppressor_explo.md3");
+	precache_model ("models/projectiles/proj_raila.md3");
+	precache_model ("models/projectiles/proj_railb.md3");
+	precache_model ("models/projectiles/proj_shotgun1.md3");
+	precache_model ("models/projectiles/proj_shotgun2.md3");
+	precache_model ("models/projectiles/proj_shotgun_explo.md3");
+	precache_model ("models/projectiles/proj_shrapnel.md3");
+	precache_model ("models/projectiles/proj_slag1.md3");
+	precache_model ("models/projectiles/proj_slag1_explo.md3");
+	precache_model ("models/projectiles/proj_slag2.md3");
+	precache_model ("models/projectiles/proj_slag2_explo.md3");
+	precache_model ("models/warp/warp.md3");
+	precache_model ("models/weapons/cannon/v_cannon.md3");
+	precache_model ("models/weapons/cannon/v_pipes.md3");
+	precache_model ("models/weapons/cannon/w_cannon.md3");
+	precache_model ("models/weapons/crystal/v_crystal.md3");
+	precache_model ("models/weapons/crystal/w_crystal.md3");
+	precache_model ("models/weapons/crystaliser/v_beam.md3");
+	precache_model ("models/weapons/crystaliser/v_crystaliser.md3");
+	precache_model ("models/weapons/lance/barrier.md3");
+	precache_model ("models/weapons/lance/v_beam.md3");
+	precache_model ("models/weapons/lance/v_flash.md3");
+	precache_model ("models/weapons/lance/v_lance.md3");
+	precache_model ("models/weapons/lance/w_lance.md3");
+	precache_model ("models/weapons/lance/w_shotgun.md3");
+
+	precache_model ("models/weapons/mace/w_mace_open.md3");
+	precache_model ("models/weapons/mace/w_mace.md3");
+	precache_model ("models/weapons/mace/v_gauntlet.md3");
+	precache_model ("models/weapons/mace/v_mace.md3");
+	precache_model ("models/weapons/mace/v_mace_blood.md3");
+	precache_model ("models/weapons/mace/v_mace_hot.md3");
+	precache_model ("models/weapons/mace/v_mace_energy.md3");
+	precache_model ("models/weapons/mace/v_mace_runes.md3");
+	precache_model ("models/weapons/melee/v_blade.md3");
+	precache_model ("models/weapons/melee/v_blade_blood.md3");
+	precache_model ("models/weapons/melee/v_blade_energy.md3");
+	precache_model ("models/weapons/melee/v_blade_hot.md3");
+	precache_model ("models/weapons/melee/v_blade_runes.md3");
+	precache_model ("models/weapons/melee/v_gauntlet.md3");
+	precache_model ("models/weapons/melee/w_blade.md3");
+	precache_model ("models/weapons/retcher/v_retcher.md3");
+	precache_model ("models/weapons/retcher/w_retcher.md3");
+	precache_model ("models/weapons/revolver/flash_big.md3");
+	precache_model ("models/weapons/revolver/flash_big.md3");
+	precache_model ("models/weapons/revolver/flash_small.md3");
+	precache_model ("models/weapons/revolver/v_revolver.md3");
+	precache_model ("models/weapons/revolver/w_revolver.md3");
+	precache_model ("models/weapons/shotgun/flash_small.md3");
+	precache_model ("models/weapons/shotgun/v_shotgun.md3");
+	precache_model ("models/weapons/shotgun/w_shotgun.md3");
+	precache_model ("models/weapons/spitter/v_fangs.md3");
+	precache_model ("models/weapons/spitter/v_spitter.md3");
+	precache_model ("models/weapons/spitter/w_spitter.md3");
+	precache_model ("particles/explo/explo_blood1.md3");
+	precache_model ("particles/explo/explo_blood2.md3");
+	precache_model ("particles/explo/explo_blood3.md3");
+	precache_model ("particles/explo/explo_blood4.md3");
+	precache_model ("particles/explo/explo_cyst.md3");
+	precache_model ("particles/explo/explo_retcher.md3");
+	precache_model ("particles/explo/explo_slag1.md3");
+	precache_model ("particles/explo/explo_slag2.md3");
+	precache_model ("particles/smoke_1.md3");
+	precache_model ("particles/smoke_2.md3");
+	precache_model ("particles/smoke_3.md3");
+	precache_model ("particles/smoke_4.md3");
+	precache_model ("particles/smoke_5.md3");
+	precache_model ("particles/smoke_6.md3");
+	precache_model ("particles/smoke_7.md3");
+	precache_model ("particles/smoke_8.md3");
+	precache_model("models/objects/decor/crystals/crystal_base.md3");
+	//precache_model("models/weapons/lance/v_lance_wrath.md3");
+	precache_model("models/artifacts/effects/revelation_particle.md3");
+	precache_model("models/artifacts/effects/orb_blackhole_small.md3");
+	precache_model("models/projectiles/proj_mace.md3");
+	precache_model("models/weapons/mace/soul.md3");
+	precache_model("particles/impact/impact_oppressor6.md3");
+	precache_model("models/dev/collisionbox.md3");
+	precache_model("models/alpha/impact_oppressor8.md3");
+	precache_model("models/items/item_readable.md3");
+	precache_model("models/artifacts/effects/revelation_note.md3");
+	precache_model("models/artifacts/effects/revelation_note_blur.md3");
+	precache_model("models/artifacts/effects/revelation_note_particle.md3");
+	precache_model("sdf");
+	precache_sound("weapons/lhit.wav");
+	precache_sound("weapons/mace/inspect.ogg");
+	precache_sound("enemies/wretch/proj_loop.ogg");
+	precache_sound("enemies/symbol/fire.ogg");
+
+	precache_monster_afflicted();
+	precache_monster_afflicted();
+	precache_monster_executioner();
+	precache_monster_fallen();
+	precache_monster_heretic();
+	precache_monster_invader();
+	precache_monster_oppressor();
+	precache_monster_stricken();
+	precache_monster_symbol();
+	precache_monster_widow();
+	precache_monster_wraith();
+	precache_monster_wretch();
+	precache_monster_brute();
+	precache_monster_boss1();
+
+	precache_sound ("doors/glyph_locked.ogg");
+	precache_sound ("doors/glyph_unlocked.ogg");
+	precache_sound ("enemies/oppressor/fire_loop.wav");
+	precache_sound ("env/amb/beat1.wav");
+	precache_sound ("env/amb/cave.wav");
+	precache_sound ("env/amb/cave2.wav");
+	precache_sound ("env/amb/drone1.wav");
+	precache_sound ("env/amb/drone2.wav");
+	precache_sound ("env/amb/tone1.wav");
+	precache_sound ("env/amb/tone2.wav");
+	precache_sound ("env/amb/whisper1.wav");
+	precache_sound ("env/amb/wind1.wav");
+	precache_sound ("env/amb/windvoice.wav");
+	precache_sound ("env/amb/windvoice2.wav");
+	precache_sound ("env/liquids/lava_splash.ogg");
+	precache_sound ("fx/fire1.ogg");
+	precache_sound ("fx/fire2.ogg");
+	precache_sound ("fx/portal.wav");
+	precache_sound ("fx/tele1.ogg");
+	precache_sound ("fx/tele2.ogg");
+	precache_sound ("fx/tele3.ogg");
+	precache_sound ("fx/tele4.ogg");
+	precache_sound ("fx/tele5.ogg");
+	precache_sound ("fx/warp.ogg");
+	precache_sound ("fx/warp_fast.ogg");
+	precache_sound ("impact/destruct/glass_break1.ogg");
+	precache_sound ("impact/destruct/glass_break2.ogg");
+	precache_sound ("impact/destruct/glass_break3.ogg");
+	precache_sound ("impact/destruct/stone_break1.ogg");
+	precache_sound ("impact/destruct/stone_break2.ogg");
+	precache_sound ("impact/destruct/wood1_break1.ogg");
+	precache_sound ("impact/destruct/wood1_break2.ogg");
+	precache_sound ("impact/destruct/wood1_break3.ogg");
+	precache_sound ("impact/gibs/gib_explo1.ogg");
+	precache_sound ("impact/gibs/gib_explo2.ogg");
+	precache_sound ("impact/gibs/gib_explo3.ogg");
+	precache_sound ("impact/gibs/gib_hit1.ogg");
+	precache_sound ("impact/gibs/gib_hit2.ogg");
+	precache_sound ("impact/gibs/gib_hit3.ogg");
+	precache_sound ("impact/gibs/gib_hit4.ogg");
+	precache_sound ("impact/gibs/gib_hit5.ogg");
+	precache_sound ("impact/gibs/gib_hit6.ogg");
+	precache_sound ("impact/gibs/gib_splat1.ogg");
+	precache_sound ("impact/gibs/gib_splat2.ogg");
+	precache_sound ("impact/gibs/gib_splat3.ogg");
+	precache_sound ("impact/projectiles/bullet1.ogg");
+	precache_sound ("impact/projectiles/bullet10.ogg");
+	precache_sound ("impact/projectiles/bullet11.ogg");
+	precache_sound ("impact/projectiles/bullet12.ogg");
+	precache_sound ("impact/projectiles/bullet13.ogg");
+	precache_sound ("impact/projectiles/bullet14.ogg");
+	precache_sound ("impact/projectiles/bullet15.ogg");
+	precache_sound ("impact/projectiles/bullet2.ogg");
+	precache_sound ("impact/projectiles/bullet3.ogg");
+	precache_sound ("impact/projectiles/bullet4.ogg");
+	precache_sound ("impact/projectiles/bullet5.ogg");
+	precache_sound ("impact/projectiles/bullet6.ogg");
+	precache_sound ("impact/projectiles/bullet7.ogg");
+	precache_sound ("impact/projectiles/bullet8.ogg");
+	precache_sound ("impact/projectiles/bullet9.ogg");
+	precache_sound ("impact/projectiles/cyst_aoe1.ogg");
+	precache_sound ("impact/projectiles/cyst_aoe2.ogg");
+	precache_sound ("impact/projectiles/cyst_aoe3.ogg");
+	precache_sound ("impact/projectiles/cyst_aoe4.ogg");
+	precache_sound ("impact/projectiles/cyst_aoe5.ogg");
+	precache_sound ("impact/projectiles/cyst_bounce1.ogg");
+	precache_sound ("impact/projectiles/cyst_bounce2.ogg");
+	precache_sound ("impact/projectiles/cyst_bounce3.ogg");
+	precache_sound ("impact/projectiles/cyst_bounce4.ogg");
+	precache_sound ("impact/projectiles/cyst_bounce5.ogg");
+	precache_sound ("impact/projectiles/cyst_explo1.ogg");
+	precache_sound ("impact/projectiles/cyst_explo2.ogg");
+	precache_sound ("impact/projectiles/cyst_explo3.ogg");
+	precache_sound ("impact/projectiles/cyst_explo4.ogg");
+	precache_sound ("impact/projectiles/cyst_explo5.ogg");
+	precache_sound ("impact/projectiles/rico1.ogg");
+	precache_sound ("impact/projectiles/rico10.ogg");
+	precache_sound ("impact/projectiles/rico11.ogg");
+	precache_sound ("impact/projectiles/rico12.ogg");
+	precache_sound ("impact/projectiles/rico13.ogg");
+	precache_sound ("impact/projectiles/rico14.ogg");
+	precache_sound ("impact/projectiles/rico15.ogg");
+	precache_sound ("impact/projectiles/rico2.ogg");
+	precache_sound ("impact/projectiles/rico3.ogg");
+	precache_sound ("impact/projectiles/rico4.ogg");
+	precache_sound ("impact/projectiles/rico5.ogg");
+	precache_sound ("impact/projectiles/rico6.ogg");
+	precache_sound ("impact/projectiles/rico7.ogg");
+	precache_sound ("impact/projectiles/rico8.ogg");
+	precache_sound ("impact/projectiles/rico9.ogg");
+	precache_sound ("impact/projectiles/shotgun_explo1.ogg");
+	precache_sound ("impact/projectiles/shotgun_explo2.ogg");
+	precache_sound ("impact/projectiles/shotgun_explo3.ogg");
+	precache_sound ("impact/projectiles/shotgun_explo4.ogg");
+	precache_sound ("impact/projectiles/shotgun_explo5.ogg");
+	precache_sound ("impact/projectiles/shotgun_explo6.ogg");
+	precache_sound ("impact/projectiles/slag1_explo1.ogg");
+	precache_sound ("impact/projectiles/slag1_explo2.ogg");
+	precache_sound ("impact/projectiles/slag1_explo3.ogg");
+	precache_sound ("impact/projectiles/slag1_explo4.ogg");
+	precache_sound ("impact/projectiles/slag2_explo1.ogg");
+	precache_sound ("impact/projectiles/slag2_explo2.ogg");
+	precache_sound ("impact/projectiles/slag2_explo3.ogg");
+	precache_sound ("impact/projectiles/slag2_explo4.ogg");
+	precache_sound ("impact/projectiles/trinket_med.ogg");
+
+	precache_sound ("impact/projectiles/trinket_small.ogg");
+	precache_sound ("items/ammo_revolver.ogg");
+	precache_sound ("items/ammo_shotgun.ogg");
+	precache_sound ("items/ammo_spitter.ogg");
+	precache_sound ("items/ammo_retcher.ogg");
+	precache_sound ("items/ammo_cannon.ogg");
+	precache_sound ("items/ammo_lance.ogg");
+	precache_sound ("items/ammo_crystallizer.ogg");
+	precache_sound ("items/ammo_mace.ogg");
+
+	precache_sound ("items/armor1.ogg");
+	precache_sound ("items/armor_dark1.ogg");
+	precache_sound ("items/armor_shard1.ogg");
+	precache_sound ("items/armor_shard2.ogg");
+	precache_sound ("items/armor_shard3.ogg");
+
+	precache_sound ("env/amb/thunder1.ogg");
+	precache_sound ("env/amb/thunder2.ogg");
+	precache_sound ("env/amb/thunder3.ogg");
+	precache_sound("impact/destruct/urn_break1.ogg");
+	precache_sound("impact/destruct/urn_break2.ogg");
+	precache_sound("impact/destruct/urn_break3.ogg");
+	precache_sound("impact/destruct/urn_break4.ogg");
+	precache_sound("impact/destruct/urn_break5.ogg");
+	precache_sound ("items/helm_dark1.ogg");
+	precache_sound ("items/armor_shard_dark1.ogg");
+	precache_sound ("items/armor_shard_dark2.ogg");
+	precache_sound ("items/armor_shard_dark3.ogg");
+	precache_sound ("items/armor_dark_impact.ogg");
+	precache_sound ("items/artifacts/aegis.ogg");
+	precache_sound ("items/artifacts/artifactA_end.ogg");
+	precache_sound ("items/artifacts/artifactA_pickup.ogg");
+	precache_sound ("items/artifacts/artifactA_use.ogg");
+	precache_sound ("items/artifacts/artifactA_spawn.ogg");
+	precache_sound ("items/artifacts/artifactB_end.ogg");
+	precache_sound ("items/artifacts/artifactB_pickup.ogg");
+	precache_sound ("items/artifacts/artifactB_use.ogg");
+	precache_sound ("items/artifacts/artifactC_end.ogg");
+	precache_sound ("items/artifacts/artifactC_pickup.ogg");
+	precache_sound ("items/artifacts/artifactC_use.ogg");
+	precache_sound ("items/artifacts/artifactD_end.ogg");
+	precache_sound ("items/artifacts/artifactD_pickup.ogg");
+	precache_sound ("items/artifacts/artifactD_use.ogg");
+	precache_sound ("items/artifacts/artifactE_end.ogg");
+	precache_sound ("items/artifacts/artifactE_pickup.ogg");
+	precache_sound ("items/artifacts/artifactE_use.ogg");
+	precache_sound ("items/artifacts/artifactF_end.ogg");
+	precache_sound ("items/artifacts/artifactF_pickup.ogg");
+	precache_sound ("items/artifacts/artifactF_use.ogg");
+	precache_sound ("items/artifacts/artifactG_end.ogg");
+	precache_sound ("items/artifacts/artifactG_loop.ogg");
+	precache_sound ("items/artifacts/artifactG_pickup.ogg");
+	precache_sound ("items/artifacts/artifactG_use.ogg");
+	precache_sound ("items/artifacts/artifactH_end.ogg");
+	precache_sound ("items/artifacts/artifactH_pickup.ogg");
+	precache_sound ("items/artifacts/artifactH_use.ogg");
+
+
+	precache_sound ("items/artifacts/void_grenade_explosion.ogg");
+	precache_sound ("items/artifacts/void_grenade_throw.ogg");
+	precache_sound ("items/artifacts/void_grenade_riser.ogg");
+	precache_sound ("items/artifacts/vicious_animus_breaking.ogg");
+	precache_sound ("items/artifacts/vicious_animus_throw.ogg");
+	precache_sound ("items/artifacts/vicious_animus_death1.ogg");
+	precache_sound ("items/artifacts/vicious_animus_attack1.ogg");
+	precache_sound ("items/artifacts/vicious_animus_attack2.ogg");
+	precache_sound ("items/artifacts/vicious_animus_loop.ogg");
+	precache_sound ("items/artifacts/vicious_animus_attack3.ogg");
+	precache_sound ("items/artifacts/mark_of_revelation_use.ogg");
+
+	precache_sound ("items/coffer_key.ogg");
+	precache_sound ("items/cysts.ogg");
+	precache_sound ("items/cysts.ogg");
+	precache_sound ("items/fangs.ogg");
+	precache_sound ("items/fangs.ogg");
+	precache_sound ("items/glyph.ogg");
+	precache_sound ("items/lifeblood_beaker1.ogg");
+	precache_sound ("items/lifeblood_beaker1.ogg");
+	precache_sound ("items/lifeblood_beaker1.ogg");
+	precache_sound ("items/lifeblood_beaker2.ogg");
+	precache_sound ("items/lifeblood_beaker3.ogg");
+	precache_sound ("items/lifeblood_vial1.ogg");
+	precache_sound ("items/lifeblood_vial1.ogg");
+	precache_sound ("items/lifeblood_vial1.ogg");
+	precache_sound ("items/lifeblood_vial2.ogg");
+	precache_sound ("items/lifeblood_vial3.ogg");
+	precache_sound ("items/lifeblood_vial3.ogg");
+	precache_sound ("items/lifeblood_chalice1.ogg");
+	precache_sound ("items/lifeblood_chalice2.ogg");
+	precache_sound ("items/lifeblood_chalice3.ogg");
+	precache_sound ("items/sigils/sigil_flight_active.ogg");
+	precache_sound ("items/sigils/sigil_flight_active.ogg");
+	precache_sound ("items/sigils/sigil_flight_active.ogg"); // (loop when active)
+	precache_sound ("items/sigils/sigil_flight_end.ogg");
+	precache_sound ("items/sigils/sigil_flight_end.ogg");
+	precache_sound ("items/sigils/sigil_flight_end.ogg"); // (sound when effect ends)
+	precache_sound ("items/sigils/sigil_flight_start.ogg"); // (sound when you get sigil)
+	precache_sound ("items/slugs.ogg");
+	precache_sound ("misc/null.wav");
+	precache_sound ("misc/null.wav");
+	precache_sound ("misc/null.wav");
+	precache_sound ("misc/null.wav");
+	precache_sound ("misc/null.wav");
+	precache_sound ("misc/null.wav");
+	precache_sound ("misc/null.wav");
+	precache_sound ("misc/null.wav");
+	precache_sound ("objects/coffers/coffer1_locked.ogg");
+	precache_sound ("objects/coffers/coffer1_unlocked.ogg");
+	precache_sound ("objects/coffers/coffer1_unlocked.ogg");
+	precache_sound ("objects/shrine.ogg");
+	precache_sound ("objects/hub1_pillar.ogg");
+	precache_sound ("objects/pylon_loop.ogg");
+	precache_sound ("objects/orrery.ogg");
+	precache_sound ("objects/switch1_use.ogg");
+	precache_sound ("particles/breathe1.ogg");
+
+	precache_sound ("player/breathe1.ogg");
+	precache_sound ("player/breathe2.ogg");
+	precache_sound ("player/breathe3.ogg");
+	precache_sound ("player/cough1.ogg");
+	precache_sound ("player/cough2.ogg");
+	precache_sound ("player/cough3.ogg");
+	precache_sound ("player/cough4.ogg");
+	precache_sound ("player/cough5.ogg");
+	precache_sound ("player/die1.ogg");
+	precache_sound ("player/die2.ogg");
+	precache_sound ("player/die3.ogg");
+	precache_sound ("player/die4.ogg");
+	precache_sound ("player/die5.ogg");
+	precache_sound ("player/footsteps/dirt1.ogg");
+	precache_sound ("player/footsteps/dirt2.ogg");
+	precache_sound ("player/footsteps/dirt3.ogg");
+	precache_sound ("player/footsteps/dirt4.ogg");
+	precache_sound ("player/footsteps/dirt5.ogg");
+	precache_sound ("player/footsteps/flesh1.ogg");
+	precache_sound ("player/footsteps/flesh2.ogg");
+	precache_sound ("player/footsteps/flesh3.ogg");
+	precache_sound ("player/footsteps/flesh4.ogg");
+	precache_sound ("player/footsteps/flesh5.ogg");
+	precache_sound ("player/footsteps/grass1.ogg");
+	precache_sound ("player/footsteps/grass2.ogg");
+	precache_sound ("player/footsteps/grass3.ogg");
+	precache_sound ("player/footsteps/grass4.ogg");
+	precache_sound ("player/footsteps/grass5.ogg");
+	precache_sound ("player/footsteps/grate1.ogg");
+	precache_sound ("player/footsteps/grate2.ogg");
+	precache_sound ("player/footsteps/grate3.ogg");
+	precache_sound ("player/footsteps/grate4.ogg");
+	precache_sound ("player/footsteps/grate5.ogg");
+	precache_sound ("player/footsteps/gravel1.ogg");
+	precache_sound ("player/footsteps/gravel2.ogg");
+	precache_sound ("player/footsteps/gravel3.ogg");
+	precache_sound ("player/footsteps/gravel4.ogg");
+	precache_sound ("player/footsteps/gravel5.ogg");
+	precache_sound ("player/footsteps/ice1.ogg");
+	precache_sound ("player/footsteps/ice2.ogg");
+	precache_sound ("player/footsteps/ice3.ogg");
+	precache_sound ("player/footsteps/ice4.ogg");
+	precache_sound ("player/footsteps/ice5.ogg");
+	precache_sound ("player/footsteps/metal1.ogg");
+	precache_sound ("player/footsteps/metal2.ogg");
+	precache_sound ("player/footsteps/metal3.ogg");
+	precache_sound ("player/footsteps/metal4.ogg");
+	precache_sound ("player/footsteps/metal5.ogg");
+	precache_sound ("player/footsteps/mud1.ogg");
+	precache_sound ("player/footsteps/mud2.ogg");
+	precache_sound ("player/footsteps/mud3.ogg");
+	precache_sound ("player/footsteps/mud4.ogg");
+	precache_sound ("player/footsteps/mud5.ogg");
+	precache_sound ("player/footsteps/puddle1.ogg");
+	precache_sound ("player/footsteps/puddle2.ogg");
+	precache_sound ("player/footsteps/puddle3.ogg");
+	precache_sound ("player/footsteps/puddle4.ogg");
+	precache_sound ("player/footsteps/puddle5.ogg");
+	precache_sound ("player/footsteps/sand1.ogg");
+	precache_sound ("player/footsteps/sand2.ogg");
+	precache_sound ("player/footsteps/sand3.ogg");
+	precache_sound ("player/footsteps/sand4.ogg");
+	precache_sound ("player/footsteps/sand5.ogg");
+	precache_sound ("player/footsteps/snow1.ogg");
+	precache_sound ("player/footsteps/snow2.ogg");
+	precache_sound ("player/footsteps/snow3.ogg");
+	precache_sound ("player/footsteps/snow4.ogg");
+	precache_sound ("player/footsteps/snow5.ogg");
+	precache_sound ("player/footsteps/stone1.ogg");
+	precache_sound ("player/footsteps/stone2.ogg");
+	precache_sound ("player/footsteps/stone3.ogg");
+	precache_sound ("player/footsteps/stone4.ogg");
+	precache_sound ("player/footsteps/stone5.ogg");
+	precache_sound ("player/footsteps/wood1.ogg");
+	precache_sound ("player/footsteps/wood2.ogg");
+	precache_sound ("player/footsteps/wood3.ogg");
+	precache_sound ("player/footsteps/wood4.ogg");
+	precache_sound ("player/footsteps/wood5.ogg");
+	precache_sound ("player/gain_health.ogg");
+	precache_sound ("player/hurt1.ogg");
+	precache_sound ("player/hurt2.ogg");
+	precache_sound ("player/hurt3.ogg");
+	precache_sound ("player/hurt4.ogg");
+	precache_sound ("player/hurt5.ogg");
+	precache_sound ("player/hurt_underwater1.ogg");
+	precache_sound ("player/hurt_underwater2.ogg");
+	precache_sound ("player/hurt_underwater3.ogg");
+	precache_sound ("player/jumps/jump1.ogg");
+	precache_sound ("player/jumps/jump2.ogg");
+	precache_sound ("player/jumps/jump3.ogg");
+	precache_sound ("player/jumps/jump4.ogg");
+	precache_sound ("player/jumps/jump5.ogg");
+	precache_sound ("player/landings/heavy_land1.ogg");
+	precache_sound ("player/landings/heavy_land2.ogg");
+	precache_sound ("player/landings/heavy_land3.ogg");
+	precache_sound ("player/landings/land_dirt1.ogg");
+	precache_sound ("player/landings/land_dirt2.ogg");
+	precache_sound ("player/landings/land_dirt3.ogg");
+	precache_sound ("player/landings/land_dirt4.ogg");
+	precache_sound ("player/landings/land_dirt5.ogg");
+	precache_sound ("player/landings/land_grass1.ogg");
+	precache_sound ("player/landings/land_grass2.ogg");
+	precache_sound ("player/landings/land_grass3.ogg");
+	precache_sound ("player/landings/land_grass4.ogg");
+	precache_sound ("player/landings/land_grass5.ogg");
+	precache_sound ("player/landings/land_grass5.ogg");
+	precache_sound ("player/landings/land_grate1.ogg");
+	precache_sound ("player/landings/land_grate2.ogg");
+	precache_sound ("player/landings/land_grate3.ogg");
+	precache_sound ("player/landings/land_grate4.ogg");
+	precache_sound ("player/landings/land_ice1.ogg");
+	precache_sound ("player/landings/land_ice2.ogg");
+	precache_sound ("player/landings/land_ice3.ogg");
+	precache_sound ("player/landings/land_ice4.ogg");
+	precache_sound ("player/landings/land_metal1.ogg");
+	precache_sound ("player/landings/land_metal2.ogg");
+	precache_sound ("player/landings/land_metal3.ogg");
+	precache_sound ("player/landings/land_metal4.ogg");
+	precache_sound ("player/landings/land_metal5.ogg");
+	precache_sound ("player/landings/land_puddle1.ogg");
+	precache_sound ("player/landings/land_puddle2.ogg");
+	precache_sound ("player/landings/land_puddle3.ogg");
+	precache_sound ("player/landings/land_puddle4.ogg");
+	precache_sound ("player/landings/land_snow1.ogg");
+	precache_sound ("player/landings/land_snow2.ogg");
+	precache_sound ("player/landings/land_snow3.ogg");
+	precache_sound ("player/landings/land_snow4.ogg");
+	precache_sound ("player/landings/land_snow5.ogg");
+	precache_sound ("player/landings/land_stone1.ogg");
+	precache_sound ("player/landings/land_stone2.ogg");
+	precache_sound ("player/landings/land_stone3.ogg");
+	precache_sound ("player/landings/land_stone4.ogg");
+	precache_sound ("player/landings/land_stone5.ogg");
+	precache_sound ("player/landings/land_wood1.ogg");
+	precache_sound ("player/landings/land_wood2.ogg");
+	precache_sound ("player/landings/land_wood3.ogg");
+	precache_sound ("player/landings/land_wood4.ogg");
+	precache_sound ("player/landings/land_wood5.ogg");
+	precache_sound ("player/landings/land_flesh1.ogg");
+	precache_sound ("player/landings/land_flesh2.ogg");
+	precache_sound ("player/landings/land_flesh3.ogg");
+	precache_sound ("player/landings/land_flesh4.ogg");
+	precache_sound ("player/landings/land_flesh5.ogg");
+	precache_sound ("player/underwater_loop.wav");
+	precache_sound ("player/water_enter1.ogg");
+	precache_sound ("player/water_exit1.ogg");
+	precache_sound ("player/water_exit2.ogg");
+	precache_sound ("player/water_exit3.ogg");
+	precache_sound ("player/water_surfacing1.ogg");
+	precache_sound ("player/water_surfacing2.ogg");
+	precache_sound ("player/water_surfacing3.ogg");
+	precache_sound ("player/breathe_apparatus.ogg");
+	precache_sound ("ui/journal/journal_close.ogg");
+	precache_sound ("ui/journal/journal_open.ogg");
+	precache_sound ("ui/journal/journal_page3.ogg");
+	precache_sound ("weapons/cannon/fire1_1.ogg");
+	precache_sound ("weapons/cannon/fire1_2.ogg");
+	precache_sound ("weapons/cannon/fire1_3.ogg");
+	precache_sound ("weapons/cannon/fire1_4.ogg");
+	precache_sound ("weapons/cannon/fire1_5.ogg");
+	precache_sound ("weapons/cannon/fire2_1.ogg");
+	precache_sound ("weapons/cannon/fire2_2.ogg");
+	precache_sound ("weapons/cannon/fire2_3.ogg");
+	precache_sound ("weapons/cannon/fire2_4.ogg");
+	precache_sound ("weapons/cannon/fire2_5.ogg");
+	precache_sound ("weapons/cannon/splash.ogg");
+	precache_sound ("weapons/cannon/inspect.ogg");
+	precache_sound ("weapons/cannon/lower.ogg");
+	precache_sound ("weapons/cannon/raise.ogg");
+	precache_sound ("weapons/crystal/inspect.ogg");
+	precache_sound ("weapons/crystal/lower.ogg");
+	precache_sound ("weapons/crystal/raise.ogg");
+
+	precache_sound ("weapons/crystal/crystallizer_fire1.ogg");
+	precache_sound ("weapons/crystal/crystallizer_fire2.ogg");
+	precache_sound ("weapons/crystal/crystallizer_fire3.ogg");
+	precache_sound ("weapons/crystal/crystallizer_fire4.ogg");
+	precache_sound ("weapons/crystal/crystallizer_fire5.ogg");
+
+	precache_sound ("weapons/crystal/crystallizer_release1.ogg");
+	precache_sound ("weapons/crystal/crystallizer_release2.ogg");
+	precache_sound ("weapons/crystal/crystallizer_release3.ogg");
+	precache_sound ("weapons/crystal/crystallizer_release4.ogg");
+	precache_sound ("weapons/crystal/crystallizer_release5.ogg");
+	
+	precache_sound ("weapons/crystal/crystallizer_fire_loop.ogg");
+
+	precache_sound ("weapons/crystal/crystallizer_fire_alt_loop.ogg");
+	precache_sound ("weapons/crystal/crystallizer_fire_alt_release.ogg");
+	precache_sound ("weapons/crystal/crystallizer_fire_alt_stinger.ogg");
+	precache_sound ("weapons/crystal/crystallizer_fire_alt_release_max.ogg");
+
+	precache_sound ("weapons/crystal/crystallizer_altfire1_max.ogg");
+	precache_sound ("weapons/crystal/crystallizer_altfire1_light.ogg");
+
+	precache_sound ("weapons/crystal/crystallizer_deselect1.ogg");
+	precache_sound ("weapons/crystal/crystallizer_deselect2.ogg");
+	precache_sound ("weapons/crystal/crystallizer_deselect3.ogg");
+	precache_sound ("weapons/crystal/crystallizer_select1.ogg");
+	precache_sound ("weapons/crystal/crystallizer_select2.ogg");
+	precache_sound ("weapons/crystal/crystallizer_select3.ogg");
+	precache_sound ("weapons/crystal/crystallizer_altfire_stinger.ogg");
+	
+
+	precache_sound ("weapons/lance/fire1.ogg");
+	precache_sound ("weapons/lance/fire2.ogg");
+	precache_sound ("weapons/lance/fire3.ogg");
+	precache_sound ("weapons/lance/inspect.ogg");
+	precache_sound ("weapons/lance/raise.ogg");
+    precache_sound ("weapons/lance/lance_select1.ogg");
+    precache_sound ("weapons/lance/lance_select2.ogg");
+    precache_sound ("weapons/lance/lance_select3.ogg");
+    precache_sound ("weapons/lance/lance_deselect1.ogg");
+    precache_sound ("weapons/lance/lance_deselect2.ogg");
+    precache_sound ("weapons/lance/lance_deselect3.ogg");
+    precache_sound ("weapons/lance/shield_loop.ogg");
+    precache_sound ("weapons/lance/shield_block1.ogg");
+    precache_sound ("weapons/lance/shield_block2.ogg");
+    precache_sound ("weapons/lance/shield_block3.ogg");
+    precache_sound ("weapons/lance/shield_fire1.ogg");
+    precache_sound ("weapons/lance/shield_fire2.ogg");
+    precache_sound ("weapons/lance/shield_fire3.ogg");
+    precache_sound ("weapons/lance/shield_release1.ogg");
+    precache_sound ("weapons/lance/shield_release2.ogg");
+    precache_sound ("weapons/lance/shield_release3.ogg");
+    precache_sound ("weapons/lance/lance_recharge.ogg");
+    precache_sound ("weapons/mace/mace_attack1.ogg");
+    precache_sound ("weapons/mace/mace_attack2.ogg");
+    precache_sound ("weapons/mace/mace_attack3.ogg");
+    precache_sound ("weapons/mace/mace_attack4.ogg");
+    precache_sound ("weapons/mace/mace_absorb1.ogg");
+    precache_sound ("weapons/mace/mace_absorb2.ogg");
+    precache_sound ("weapons/mace/mace_absorb3.ogg");
+    precache_sound ("weapons/mace/mace_absorb4.ogg");
+    precache_sound ("weapons/mace/mace_absorb5.ogg");
+    precache_sound ("weapons/mace/mace_absorb6.ogg");
+    precache_sound ("weapons/mace/mace_absorb7.ogg");
+    precache_sound ("weapons/mace/mace_absorb8.ogg");
+    precache_sound ("weapons/mace/mace_absorb9.ogg");
+    precache_sound ("weapons/mace/mace_absorb10.ogg");
+    precache_sound ("weapons/mace/mace_impact1.ogg");
+    precache_sound ("weapons/mace/mace_impact2.ogg");
+    precache_sound ("weapons/mace/mace_impact3.ogg");
+    precache_sound ("weapons/mace/mace_impact4.ogg");
+    precache_sound ("weapons/mace/mace_impact5.ogg");
+    precache_sound ("weapons/mace/mace_altfire1.ogg");
+    precache_sound ("weapons/mace/mace_altfire2.ogg");
+    precache_sound ("weapons/mace/mace_altfire3.ogg");
+
+    precache_sound ("weapons/mace/mace_unfold1.ogg");
+
+    precache_sound ("weapons/mace/mace_soul_release1.ogg");
+    precache_sound ("weapons/mace/mace_soul_release2.ogg");
+    precache_sound ("weapons/mace/mace_soul_release3.ogg");
+    precache_sound ("weapons/mace/mace_soul_release4.ogg");
+    precache_sound ("weapons/mace/mace_soul_release5.ogg");
+    precache_sound ("weapons/mace/mace_soul_release6.ogg");
+    precache_sound ("weapons/mace/mace_soul_release7.ogg");
+    precache_sound ("weapons/mace/mace_soul_release8.ogg");
+	precache_sound ("weapons/mace/mace_unfold1.ogg");
+
+    precache_sound ("weapons/mace/mace_hit_stone1.ogg");
+    precache_sound ("weapons/mace/mace_hit_stone2.ogg");
+    precache_sound ("weapons/mace/mace_hit_stone3.ogg");
+    precache_sound ("weapons/mace/mace_hit_stone4.ogg");
+
+	precache_sound ("weapons/melee/attack1.ogg");
+	precache_sound ("weapons/melee/attack2.ogg");
+	precache_sound ("weapons/melee/attack3.ogg");
+	precache_sound ("weapons/melee/attack4.ogg");
+	precache_sound ("weapons/melee/attack5.ogg");
+	precache_sound ("weapons/melee/attack6.ogg");
+	precache_sound ("weapons/melee/attack7.ogg");
+	precache_sound ("weapons/melee/attack8.ogg");
+	precache_sound ("weapons/melee/impact1.ogg");
+	precache_sound ("weapons/melee/impact2.ogg");
+	precache_sound ("weapons/melee/impact3.ogg");
+	precache_sound ("weapons/melee/inspect.ogg");
+	precache_sound ("weapons/melee/select1.ogg");
+	precache_sound ("weapons/melee/select2.ogg");
+	precache_sound ("weapons/retcher/dryfire.ogg");
+	precache_sound ("weapons/retcher/fire1_1.ogg");
+	precache_sound ("weapons/retcher/fire1_2.ogg");
+	precache_sound ("weapons/retcher/fire1_3.ogg");
+	precache_sound ("weapons/retcher/fire1_4.ogg");
+	precache_sound ("weapons/retcher/fire1_5.ogg");
+	precache_sound ("weapons/retcher/fire2_1.ogg");
+	precache_sound ("weapons/retcher/fire2_2.ogg");
+	precache_sound ("weapons/retcher/fire2_3.ogg");
+	precache_sound ("weapons/retcher/fire2_4.ogg");
+	precache_sound ("weapons/retcher/fire2_5.ogg");
+	precache_sound ("weapons/retcher/inspect.ogg");
+	precache_sound ("weapons/retcher/lower.ogg");
+	precache_sound ("weapons/retcher/raise.ogg");
+	precache_sound ("weapons/retcher/reload.ogg");
+	precache_sound ("weapons/revolver/dryfire.ogg");
+	precache_sound ("weapons/revolver/fire1_1.ogg");
+	precache_sound ("weapons/revolver/fire1_2.ogg");
+	precache_sound ("weapons/revolver/fire1_3.ogg");
+	precache_sound ("weapons/revolver/fire2_1.ogg");
+	precache_sound ("weapons/revolver/fire2_2.ogg");
+	precache_sound ("weapons/revolver/inspect.ogg");
+	precache_sound ("weapons/revolver/lower.ogg");
+	precache_sound ("weapons/revolver/raise.ogg");
+	precache_sound ("weapons/shotgun/charge.ogg");
+	precache_sound ("weapons/shotgun/dryfire.ogg");
+	precache_sound ("weapons/shotgun/emptytoreload.ogg");
+	precache_sound ("weapons/shotgun/fire1_1.ogg");
+	precache_sound ("weapons/shotgun/fire1_2.ogg");
+	precache_sound ("weapons/shotgun/fire2_1.ogg");
+	precache_sound ("weapons/shotgun/fire2_2.ogg");
+	precache_sound ("weapons/shotgun/firetoempty.ogg");
+	precache_sound ("weapons/shotgun/inspect.ogg");
+	precache_sound ("weapons/shotgun/lower.ogg");
+	precache_sound ("weapons/shotgun/piston_in.ogg");
+	precache_sound ("weapons/shotgun/piston_out.ogg");
+	precache_sound ("weapons/shotgun/raise.ogg");
+	precache_sound ("weapons/spitter/dryfire.ogg");
+	precache_sound ("weapons/spitter/fire1_1.wav");
+	precache_sound ("weapons/spitter/fire1_2.wav");
+	precache_sound ("weapons/spitter/fire1_3.wav");
+	precache_sound ("weapons/spitter/fire1_4.wav");
+	precache_sound ("weapons/spitter/fire1_5.wav");
+	precache_sound ("weapons/spitter/fire1_loop.wav");
+	precache_sound ("weapons/spitter/fire1_release.wav");
+	precache_sound ("weapons/spitter/fire2_1.wav");
+	precache_sound ("weapons/spitter/fire2_2.wav");
+	precache_sound ("weapons/spitter/fire2_3.wav");
+	precache_sound ("weapons/spitter/fire2_release.wav");
+	precache_sound ("weapons/spitter/inspect.ogg");
+	precache_sound ("weapons/spitter/lower.ogg");
+	precache_sound ("weapons/spitter/raise.ogg");
+	precache_sound ("weapons/spitter/raise.ogg");
+    precache_monster_prowler();
+    precache_monster_lurker();
+    precache_monster_keeper();
+    precache_sound ("items/artifacts/artifactE_end.ogg");
+    precache_sound ("objects/switch1_use.ogg");
+    precache_sound ("weapons/crystaliser/fire1.ogg");
+    precache_sound ("weapons/crystaliser/inspect.ogg");
+    precache_sound ("weapons/crystaliser/raise.ogg");
+	precache_sound ( "impact/destruct/skullbreak.ogg");
+};
+
+///////////////////////////////////end of qc file

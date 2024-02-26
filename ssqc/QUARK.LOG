@@ -1,0 +1,42 @@
+QuArKLog> QuArK started at 11/02/2022 20:44:37
+QuArKLog> QuArK version is QuArK 6.6 Beta 7
+QuArKLog> Loglevel is 20
+Log> Failed to get special folder 30: error 0x80004005
+Log> The datatype of Registry key HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Video\{4efe5d20-bdae-4646-a764-1434b06aabf7}\0000\HardwareInformation.AdapterString is incorrect (recoverable)!
+Log> The datatype of Registry key HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Video\{4efe5d20-bdae-4646-a764-1434b06aabf7}\0000\HardwareInformation.DacType is incorrect (recoverable)!
+Log> The datatype of Registry key HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Video\{4efe5d20-bdae-4646-a764-1434b06aabf7}\0000\HardwareInformation.ChipType is incorrect (recoverable)!
+SysLog> CPU:
+SysLog> 12 x AMD Unknown - 3194 MHz
+SysLog> Submodel: Primary
+SysLog> Model ID: Family 23  Model 1  Stepping 1  Level 13
+SysLog> 
+SysLog> MEMORY:
+SysLog> Physical Memory Total: 2.147.483.647 Bytes
+SysLog> Physical Memory Free: 2.147.483.647 Bytes
+SysLog> Virtual Memory Free: 2.147.287.039 Bytes
+SysLog> 
+SysLog> OS:
+SysLog> Platform: Windows 8 or Windows Server 2012
+SysLog> Version: Uniprocessor Free 6.2.9200
+SysLog> Service Pack: 0
+SysLog> Type: Workstation
+SysLog> Running under Wow64
+SysLog> 
+SysLog> VIDEO:
+SysLog> [Device 1] AMD RADV POLARIS10
+SysLog> [Adapter 1] AMD RADV POLARIS10
+SysLog>     Chipset: AMD RADV POLARIS10
+SysLog>     DAC: Intergrated RAMDAC
+SysLog>     Memory: Unknown Bytes
+SysLog>     Provider: Unknown
+SysLog>     Driver date: 2-11-2022
+SysLog>     Driver version: Unknown
+SysLog> 
+SysLog> DIRECTX:
+SysLog> Installed version: 4.09.00.0904
+PythonLog> PYTHON:
+PythonLog> Version: 2.4.4 (#71, Oct 18 2006, 08:34:43) [MSC v.1310 32 bit (Intel)]
+PythonLog> DLL: Z:\media\nahuel\87f4b0cf-5031-473b-a520-e25101b4d88b\Program Files (x86)\QuArK 6.6.0 Beta 4\dlls\python.dll
+Log> Error: Access violation at address 00000000. Read of address 00000000.
+Log> Error: Unhandled exception during start-up. Program terminated.
+QuArKLog> QuArK closed at 11/02/2022 20:44:41

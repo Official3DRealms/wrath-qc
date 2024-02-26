@@ -1,0 +1,54 @@
+
+Reki's Gourmet Achievement Adding Guide!
+(last modified May 11 2023)
+
+So you want to add some achievements to the QuakeC? Okay...
+
+First, you have to initialize your achievement in *achievements.h*, which is a shared file between MenuQC
+and CSQC.
+
+Initializations look like this:
+	_ACH_ID(SP_HUB1, __NULL__), \
+
+This is abusing what's called an X-Macro (https://en.wikipedia.org/wiki/X_Macro) to let the compiler
+handle building several synchronized lists so we only have to declare achievements in once place.
+The first argument in the _ACH_ID "function" is the internal steam name for the achievement, which is 
+set on the steampartner website. The second argument is a reference to a callback function, which will be
+ran when an achievement is unlocked or a stat changes value.
+
+The example achievement here is for SP (single player achievement) HUB1, which is unlocked via an
+info_achievement entity placed in the hub1 map. This is the simplest kind of achievement to code
+because all the QuakeC needs to do is declare its existence and any callbacks it may want to run.
+
+That being said QuakeC can also handle the unlocking of achievements via the Steam_UnlockAchievement
+function (found in SSQC and CSQC) which is a helper function that automatically networks the required
+info from the server to the client inorder to trigger the unlock. Steam_UnlockAchievement takes two
+arguments: Steam_UnlockAchievement(entity destination, float achID). Destination points to a
+specific player, or *world* if you want it to broadcast to all connected players. in CSQC this argument
+is ignored. achID is the value (const float enum) of the achievement, which is just the first argument of
+_ACH_ID. So for example if I wanted to unlock SP_HUB1 for the player upon connecting, I could put
+Steam_UnlockAchievement(self, SP_HUB1) in PutClientInServer().
+
+
+Now you've mastered achievements, lets move on to stats...
+
+Stats are declared much the same way (inside *achievements.h*)
+
+Initializations look like this:
+	_STAT_ID(blade_lunge_kills, 0, __NULL__), \
+
+The first argument is the internal steam name, second argument is the type (0 = int, 1 = float) *THIS MUST BE
+MATCHED WITH THE STEAM PARTNER SITE!*, and finally the third argument is the callback.
+
+These stats will automatically trigger achievement unlocks when a stat hits a value set by its corresponding
+achievement. The QuakeC isn't responsible for doing anything with these stats for milestone achievements.
+
+You have access to 2 helper functions for stats:
+	Steam_StatIncrement(entity destination, float statID, float value)
+	Steam_StatSet(entity destination, float statID, float value)
+
+They work similarly, where Increment adds "value" to the given stat, and Set sets the stat to the given value.
+Most of the time you will only use Increment, thought Set could be useful in some scenarios.
+
+
+You're now equipped to add any number of achievements to the QuakeC, good luck o7

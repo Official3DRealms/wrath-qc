@@ -1,0 +1,31 @@
+void() launch_projectile_artifact_think =
+{
+	self.angles_y = y + 1;
+	self.nextthink = time + 0.1;
+};
+void() launch_projectile_artifact = 
+{ 
+	local entity artifact_projectile;
+	artifact_projectile = spawn();
+	artifact_projectile.owner = self;
+	artifact_projectile.movetype = MOVETYPE_FLYMISSILE;
+	artifact_projectile.wrathflags += FL_PROJECTILE;
+	artifact_projectile.solid = SOLID_TRIGGER;
+	artifact_projectile.scale = 1;
+	artifact_projectile.touch = projectile_touch_wre;
+	artifact_projectile.classname = "projectile";
+	artifact_projectile.lifetime  = time + 7.5;
+	artifact_projectile.traileffectnum = particleeffectnum("proj_wretch_trail");
+	setmodel(artifact_projectile, "models/projectiles/proj_wretch.md3");
+	setsize(artifact_projectile, '0 0 0', '0 0 0');
+	makevectors(self.angles);
+	org = v_forward * 128;
+	setorigin(artifact_projectile, org);
+
+	dir = org + v_right * 128;
+
+	artifact_projectile.velocity = dir *(1024);
+	artifact_projectile.angles = vectoangles(dir);
+	artifact_projectile.think = launch_projectile_artifact_think;
+	artifact_projectile.nextthink = time + 0.1;
+};

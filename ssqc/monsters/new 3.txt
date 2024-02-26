@@ -1,0 +1,147 @@
+void()vicious_idol_attacka1;
+void() vicious_idol_waiting1 =[$wre_idle1, vicious_idol_waiting1]
+{
+	ai_face();
+	if (visible(self.enemy))
+	{
+		self.think = vicious_idol_attacka1;
+		self.nextthink = time + 0.1;
+	}
+	else
+		next_enemy();
+	if(!self.enemy)
+		next_enemy();
+
+};
+void() vicious_idol_waiting2 =[$wre_idle2, vicious_idol_waiting2]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+void() vicious_idol_waiting3 =[$wre_idle3, vicious_idol_waiting3]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+void() vicious_idol_waiting4 =[$wre_idle4, vicious_idol_waiting4]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+void() vicious_idol_waiting5 =[$wre_idle5, vicious_idol_waiting5]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+void() vicious_idol_waiting6 =[$wre_idle6, vicious_idol_waiting6]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+void() vicious_idol_waiting7 =[$wre_idle7, vicious_idol_waiting7]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+void() vicious_idol_waiting8 =[$wre_idle8, vicious_idol_waiting8]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+void() vicious_idol_waiting9 =[$wre_idle9, vicious_idol_waiting9]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+void() vicious_idol_waiting10 =[$wre_idle10, vicious_idol_waiting10
+{
+	ai_face();
+	if (visible(self.enemy))
+	{
+		self.think = vicious_idol_attacka1;
+		self.nextthink = time + 0.1;
+	}
+	else
+		next_enemy();
+	if(!self.enemy)
+		next_enemy();
+};
+void() vicious_idol_waiting11 =[$wre_idle11, vicious_idol_waiting11]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+void() vicious_idol_waiting12 =[$wre_idle12, vicious_idol_waiting12]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+void() vicious_idol_waiting13 =[$wre_idle13, vicious_idol_waiting13]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+void() vicious_idol_waiting14 =[$wre_idle14, vicious_idol_waiting14]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+void() vicious_idol_waiting15 =[$wre_idle15, vicious_idol_waiting15]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+void() vicious_idol_waiting16 =[$wre_idle16, vicious_idol_waiting16]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+void() vicious_idol_waiting17 =[$wre_idle17, vicious_idol_waiting17]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+void() vicious_idol_waiting18 =[$wre_idle18, vicious_idol_waiting18]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+void() vicious_idol_waiting19 =[$wre_idle19, vicious_idol_waiting19]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+void() vicious_idol_waiting20 =[$wre_idle20, vicious_idol_waiting1]{ai_face();if (visible(self.enemy)){self.think = vicious_idol_attacka1;self.nextthink = time + 0.1;}};
+
+
+void()vicious_idol_attacka1 =[$wre_attack1,vicious_idol_attacka2]{ai_face();self.glowmod = '0.6 0.6 0.6';	monstersound2("enemies/wretch/step", 5, CHAN_AUTO);sound(self, CHAN_AUTO, "enemies/wretch/preattack.ogg", 1,/*80 + random() *30100*/ 0.25);};
+void()vicious_idol_attacka2 =[$wre_attack2,vicious_idol_attacka3]{ai_face();self.glowmod = '0.7 0.7 0.7';};
+void()vicious_idol_attacka3 =[$wre_attack3,vicious_idol_attacka4]
+{
+	ai_face();self.glowmod = '0.8 0.8 0.8';
+};
+void()vicious_idol_attacka4 =[$wre_attack4,vicious_idol_attacka5]{ai_face();self.glowmod = '0.9 0.9 0.9';};
+void()vicious_idol_attacka5 =[$wre_attack5,vicious_idol_attacka6]
+{
+	ai_face();self.glowmod = '1 1 1';
+};
+void()vicious_idol_attacka6 =[$wre_attack6,vicious_idol_attacka7]
+{
+	ai_face();
+	if(test_ia == 1)
+		self.enemy_prediction = self.oldposition.origin;
+	wretch_attack();
+	self.glowmod = '0.9 0.9 0.9';
+};
+void()vicious_idol_attacka7 =[$wre_attack7,vicious_idol_attacka8]{ai_face();self.glowmod = '0.8 0.8 0.8';};
+void()vicious_idol_attacka8 =[$wre_attack8,vicious_idol_attacka11]
+{	
+	ai_face();
+	float enemy_is_visible = visible(self.enemy);
+	if(!self.enemy)
+		next_enemy();
+	else
+	{
+		if(!enemy_is_visible)
+			next_enemy();
+		else
+		{
+		if((self.enemy.classname == "player") && (self.player_temp_enemy < time)) 
+			next_enemy();
+		}	
+	}		
+	self.nextthink = time + 0.1;
+	self.glowmod = '0.7 0.7 0.7';
+	if (enemy_is_visible)
+		self.think =vicious_idol_attacka9;
+	else
+		self.think =vicious_idol_waiting1;	
+};
+void()vicious_idol_attacka9 =[$wre_attack9,vicious_idol_attacka10]{ai_face();self.glowmod = '0.8 0.8 0.8';};
+void()vicious_idol_attacka10 =[$wre_attack10,vicious_idol_attacka6]{ai_face();self.glowmod = '0.9 0.9 0.9';};
+void()vicious_idol_attacka11 =[$wre_attack11,vicious_idol_run1]{ai_face();ai_runwalk(wretch_rs /2);self.glowmod = '0.6 0.6 0.6';};
+
+
+void() ViciousIdol_touch =
+{
+	if ((other == self.owner))
+		return;	
+	//if(!(other == world))
+	//	return;	
+
+	//self.colormod = '3 0.125 2';
+	self.origin_z += 12;
+	self.touch = SUB_Null;
+	self.movetype = 0;
+	self.velocity = '0 0 0';
+	self.solid = SOLID_BBOX;
+	setmodel(self, "models/enemies/wretch/wretch.md3");
+	setsize(self, wretch_bbox *-0.5, wretch_bbox *0.5);
+	setorigin (self, self.origin);
+	self.frame = 0;
+	next_enemy();
+	self.friendly_monster = 1;
+	self.think = vicious_idol_attacka1;
+	self.nextthink = time + 0.1;
+};
+
+void() ViciousIdol_selected =
+{
+	float ViciousIdol_vel = 512;
+	float ViciousIdol_velz = 128;
+
+	local entity ViciousIdol;
+	ViciousIdol = spawn ();
+	ViciousIdol.owner = self;
+	ViciousIdol.movetype = MOVETYPE_BOUNCE;
+	ViciousIdol.solid = SOLID_TRIGGER;
+	ViciousIdol.classname = "viciousgrenade";
+	makevectors (self.v_angle);
+	if (self.v_angle_x)
+		ViciousIdol.velocity = v_forward*ViciousIdol_vel + v_up * ViciousIdol_velz + crandom()*v_right*1 + crandom()*v_up*1;
+	else
+	{
+		ViciousIdol.velocity = normalize(self.cursor_trace_endpos - ViciousIdol.origin) *ViciousIdol_vel;
+		ViciousIdol.velocity_z += ViciousIdol_velz;
+	}
+	ViciousIdol.angles = vectoangles(ViciousIdol.velocity);
+	ViciousIdol.touch = ViciousIdol_touch;
+	setmodel (ViciousIdol, "models/ViciousIdol.md3");
+	setsize(ViciousIdol, '-16 -16 -32','16 16 32');
+	setorigin (ViciousIdol, self.origin);
+};
+
+
+///////////////////////////////////end of qc file

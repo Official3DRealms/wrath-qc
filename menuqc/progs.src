@@ -1,0 +1,23 @@
+../../menu.dat
+
+#define MENU
+#pragma includedir "../"
+
+#define NEW_MENU 1
+#define DEBUG 0
+
+../dp_keycodes.qc
+menudefs.qc
+../shared_menu.qc
+../shared_menu_csqc.qc
+wrathmenudefs.qc
+../input_manager.qc
+../steam.qc
+drawmenu.qc
+commands.qc
+../uielement.qc
+../localization.qc
+../save_salvage.qc
+menu.qc
+menu_types.qc
+

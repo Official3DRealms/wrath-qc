@@ -1,0 +1,36 @@
+../../csprogs.dat
+
+#define CSQC
+#define DEBUG 0
+#define CREDITS
+#pragma includedir "../"
+
+defs.qc
+constants.qc
+../dp_keycodes.qc
+../shared.qc
+../shared_menu.qc
+../shared_menu_csqc.qc
+wrathdefs.qc
+../input_manager.qc
+draw.qc
+frik_file.qc
+radial.qc
+multiplayer.qc
+../steam.qc
+hud_messages.qc
+../orrey.qc
+../shepherd.qc
+bezier.qc
+beam.qc
+models.qc
+precaches.qc
+captions.qc
+centerprint.qc
+viewmodel.qc
+../localization.qc
+main.qc
+../uielement.qc
+journal.qc
+hud.qc
+credits.qc
