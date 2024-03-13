@@ -178,6 +178,15 @@ void(vector org, entity e) life_siphon_effect =
 		setmodel(siphon_effect, "models/artifacts/effects/life_siphon_heretic.md3");
 
 	}
+	if (e.classname == "monster_keeper")
+	{
+		siphon_effect.scale = 1.5;
+		siphon_effect.effects = EF_ADDITIVE + 512;
+		siphon_effect.skin = 6;
+		setmodel(siphon_effect, "models/artifacts/effects/life_siphon_heretic.md3");
+
+	}
+
 	if(e.classname== "object_fakecoffer")
 	{
 		siphon_effect.alpha = 4.5;
@@ -218,7 +227,7 @@ void(entity attacker, entity attacked)life_siphon_gain =
 	if (attacked.classname == "monster_wretch")
 		health_gain = 15;
 	if (attacked.classname == "monster_keeper")
-		health_gain = 20;
+		health_gain = 50;
 	if (attacked.classname == "monster_oppressor")
 		health_gain = 20;
 	if (attacked.classname == "monster_lurker")
@@ -339,7 +348,7 @@ void(entity targ, entity attacker, float gibable) Killed =
 	if (targ.classname == "monster_keeper")
 		targ.journal_jmessagesm = JB_O;
 	entity pl = find(world, classname, "player");
-	if (!(pl.journal_jmessagesm &targ.journal_jmessagesm) && (targ.flags &FL_MONSTER))
+	if (!(pl.journal_jmessagesm &targ.journal_jmessagesm) && ((targ.flags &FL_MONSTER)||(targ.classname == "monster_keeper")))
 	{
 		pl.journal_jmessagesm += targ.journal_jmessagesm;
 		//Hud_message(35, pl.origin, pl);
@@ -403,7 +412,7 @@ void(entity targ, entity attacker, float gibable) Killed =
 		self.think = PlayerDeathThink;
 		self.nextthink = time;
 		self.deadflag = DEAD_DEAD;
-		self.deadwaiting = time + 0.2;
+		self.deadwaiting = time + 0.3;
 		self.r_healthhaze = 0.4;
 
 		remove(self.vweapon);
@@ -424,7 +433,7 @@ void(entity targ, entity attacker, float gibable) Killed =
 	}
 
 
-	if (self.flags &FL_MONSTER)
+	if ((self.flags &FL_MONSTER)||(targ.classname == "monster_keeper"))
 	{
 
 		if(self.voided != 1)
@@ -649,7 +658,7 @@ void(entity targ, entity damage) direct_damage =
 	if (!(targ.health))
 		return;
 
-};
+}; void()check_redinvulnerability;
 void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = 
 {	 
 	vector dir;
@@ -698,9 +707,18 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 		pointparticles(bparticle, targ.origin, '0 0 0', 1);
 		return;
 	}
-	if (!targ.takedamage)
+	if ((!targ.takedamage) && (targ.health > 0) &&(targ.warped >= 1)&& (targ.flags & FL_MONSTER) &&(targ.classentity =="monsters"))
+	{
+		if(targ.warpedtime < time)
+		{
+			entity oself = self;
+			self = targ;
+			check_redinvulnerability();
+			self = oself;
+		}
+	}
+	if ((!targ.takedamage))
 		return;
-
     if(targ.wrath_inv > time)
        return;
 	if (!(targ.health))
@@ -730,6 +748,8 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 		floatdmg = damage *0.75;
 		if (skill == 3)
 		floatdmg = damage *1;
+		if (skill == 4)
+		floatdmg = damage *1.5;
 
 		if((floatdmg > 0) && (floatdmg <1)) 
 		floatdmg = 1;

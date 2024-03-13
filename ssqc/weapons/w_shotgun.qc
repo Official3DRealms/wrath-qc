@@ -1228,7 +1228,9 @@ void() empty_reload_shotgun = { sound(self, CHAN_AUTO, "weapons/shotgun/emptytor
 	self.think = idle_shotgun;
 }
 
-void() raise_shotgun2 = { if (self.vweaponframe == 103)
+void() raise_shotgun2 = { 
+
+	//if (self.vweaponframe == 103)
 		W_SetWeapon();
 	self.vweaponframe += 1;
 	if (self.vweaponframe >= 106)

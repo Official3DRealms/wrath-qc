@@ -191,6 +191,30 @@ void()color_controller_think =
 	self.owner.colormod = self.colormod;
 	self.nextthink = time + 0.1;
 }
+
+void() check_redinvulnerability =
+{
+	if(self.health > 0)
+	{
+		if((!(self.colormod = '1 1 1')) && (self.takedamage != DAMAGE_AIM))
+		{
+			if(!(self.colormod = '1 1 1'))
+			{
+				entity color_controller = spawn();
+				setmodel	 (color_controller,"");
+				color_controller.owner = self;
+				color_controller.warpframe = 1;
+				color_controller.colormod = self.colormod;
+				color_controller.think = color_controller_think;
+				color_controller.nextthink = time;
+			}
+		}
+		if(self.takedamage != DAMAGE_AIM)
+			self.takedamage = DAMAGE_AIM;
+	}
+};
+
+
 void() warped_go = { self.flags = self.flags | FL_MONSTER;
 	self.frame += 1;
 
@@ -212,7 +236,7 @@ void() warped_go = { self.flags = self.flags | FL_MONSTER;
 	else	
 		self.takedamage = DAMAGE_AIM;
 
-	self.warpedtime = time + 0.1;
+	self.warpedtime = time + 0.15;
 	if (self.frame < self.lastframewarp)
 	{
 
@@ -314,7 +338,15 @@ void() walkmonster_start =
 		self.think = warped_go;
 	else
 		self.think = walkmonster_start_go;
-	if ((self.rise == 1) || (self.spawned == 1) || (self.warped))
+
+	if (self.warped == 1)
+	{	
+
+		self.warpedtime = time + 0.15;
+		self.nextthink = time;
+		return;
+	}
+	if ((self.rise == 1) || (self.spawned == 1) )
 		self.nextthink = time + 0.05;
 	else
 		self.nextthink = self.nextthink + random() *0.25;

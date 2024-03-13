@@ -478,6 +478,10 @@ void(entity ownr)spawn_attar_enemy =
 
 void(entity friend) Create_friendly_monster = 
 {
+
+	if(friend.warped == 1)
+		return;
+
 	friend.friendly_monster = 1;
 	if(friend.enemy)
 		friend.exenemy = friend.enemy; 
@@ -501,7 +505,7 @@ void(entity friend) Create_friendly_monster =
 
 void()cloudtouch =
 {
-	if ((other.classentity ==  "monsters") && (other.friendly_monster != 1) && (	other.warped_time < time))
+	if ((other.classentity ==  "monsters") && (other.friendly_monster != 1) && (other.warped_time < time))
 		Create_friendly_monster(other);
 
 };
@@ -514,7 +518,7 @@ void() 	recheck_friendly_enemies =
 	while (friend)	
 	{
 		entity holder = nextent(friend);
-		if ((friend.flags & FL_MONSTER) &&((friend.alreadykilled != 1))&&((friend.enemy.classname == "player")) && (friend.friendly_monster == 1) &&(friend.health > 0))
+		if ((friend.flags & FL_MONSTER) &&((friend.alreadykilled != 1))&&((friend.enemy.classname == "player")) && (friend.warped_time < time)&& (friend.friendly_monster == 1) &&(friend.health > 0))
 		{
 			entity oself= self;
 			self = friend;
@@ -660,7 +664,7 @@ void() attar_think_fly =
 	local float fm;
 	while (head)
 	{
-		if ((head.classentity ==  "monsters") && (head.friendly_monster != 1))
+		if ((head.classentity ==  "monsters") && (head.warped_time < time)&& (head.friendly_monster != 1))
 		{
 			fm = 1;		
 		}

@@ -103,7 +103,7 @@ typedef struct
 	_ACH_ID(SP_GRIND_VOID, __NULL__) /* done 7/30 */ \
 	_ACH_ID(SP_GRIND_SIPHON, __NULL__) /* done 7/19 */ \
 	_ACH_ID(SP_GRIND_MACE, __NULL__) /* done 7/30 */ \
-	_ACH_ID(SP_GRIND_DEFLECTION, __NULL__) /* done 7/30 */ \
+	_ACH_ID(SP_GRIND_DEFLECTION, __NULL__) /* done 7/30 */
 
 #define _ACH_ID(id, callback) id,
 enum ST_ACHIEVEMENTS:float

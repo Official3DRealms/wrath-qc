@@ -456,17 +456,48 @@ void()check_item_onfloor =
 
 	if((rintvelocity_x == 0) && (rintvelocity_y == 0) &&(!(self.flags & FL_ONGROUND)))
 	{
-	self.movetype = MOVETYPE_TOSS;
-	self.velocity_x = crandom() *10;
-	self.velocity_y = crandom() *10;
-	self.velocity_z = random() *10;
+		self.movetype = MOVETYPE_TOSS;
+		self.velocity_x = crandom() *10;
+		self.velocity_y = crandom() *10;
+		self.velocity_z = random() *10;
 	}
 
-	if((self.flags & FL_ONGROUND) && (self.oldgroundentity == world))	
-	self.think = SUB_Null;
-	else
-	self.think = check_item_onfloor;
+
+
+
+
+	if((self.flags & FL_ONGROUND) && (self.groundentity == world))	
+	{
+		self.think = SUB_Null; 
+		self.nextthink = time  + 0.05;
+		if(self.movetype == MOVETYPE_TOSS)
+			self.movetype = MOVETYPE_NONE;
+		
+		return;		
+	}
+
+	if((self.oldorigin == self.origin))	
+	{
+		self.think = SUB_Null; 
+		vector sor;
+		sor_z = (self.mins_z - 2) * -1;
+		if(self.rwpn != 3)
+		{
+			traceline(self.origin, self.origin - sor, 3, self);
+			if(trace_fraction != 1)
+			{
+				if((self.movetype == MOVETYPE_TOSS)||(self.movetype == MOVETYPE_BOUNCE))
+					self.movetype = MOVETYPE_NONE;
+			}
+			self.rwpn = 3;	
+		}
+		self.velocity = '0 0 0';
 	
+	}
+	else
+		self.think = check_item_onfloor;
+	
+	self.oldorigin = self.origin;
 	self.nextthink = time  + 0.05;
 };
 
@@ -1040,7 +1071,7 @@ void() weapon_mace =
 	//setmodel(self, "models/weapons/mace/w_mace_open.md3");
 	setmodel(self, "models/weapons/mace/w_mace.md3");
 	setsize(self, '-12 -12 -24' ,'12 12 8');
-	//self.noise  ="misc/null.wav";
+	self.noise  ="weapons/mace/mace_unfold1.ogg";
 	precache_sound(self.noise);
 	//self.ammo_lance = 20;
 	self.rwpn = 1;
@@ -1730,6 +1761,21 @@ void() artifact_touch =
 	if ((other.ShockWave >= 9) && (self.ShockWave))
 		{if(other.time_emptymessage < time)Hud_FullNotification(other);other.time_emptymessage = time + 2.1;return;}
 
+
+	float tetherlimit;
+
+		tetherlimit = 10000;
+	if(skill == 2)
+		tetherlimit = 9;
+	if(skill == 3)
+		tetherlimit = 3;
+
+
+
+	if ((other.SoulTether >= tetherlimit) && (self.SoulTether))
+		{if(other.time_emptymessage < time)Hud_FullNotification(other);other.time_emptymessage = time + 2.1;return;}
+
+
 	if ((!(other.centerprint_messages &1)) && (!self.SoulTether))
 	{
 		//Hud_message(256, other.origin, other);
@@ -1822,7 +1868,7 @@ void() artifact_touch =
 void() radial = 
 {
 	self.scale = 1;
-	self.movetype = MOVETYPE_BOUNCE;
+	self.movetype = MOVETYPE_TOSS;
 	self.solid = SOLID_TRIGGER;
 	self.cnt = 1;
 	//self.flags += FL_ITEM;
@@ -2488,7 +2534,7 @@ entity(vector org, string class, float ammount, entity ownr) drop_item =
 	{
 		dropped.noise = "items/ammo_revolver.ogg";
 		setmodel(dropped, "models/items/ammo_revolver.md3");
-		dropped.ammo_cannon = ammount;
+		//dropped.ammo_cannon = ammount;
 		dropped.msg = 120;
 		dropped.msg_icon = "slugs";
 		dropped.msg_text = "$NOTIFY_AMMO_REVOLVER";
@@ -2504,7 +2550,7 @@ entity(vector org, string class, float ammount, entity ownr) drop_item =
 	{
 		dropped.noise = "items/ammo_revolver.ogg";
 		setmodel(dropped, "models/items/ammo_invader.md3");
-		dropped.ammo_cannon = ammount;
+		//dropped.ammo_cannon = ammount;
 		dropped.msg = 120;
 		dropped.msg_icon = "slugs";
 		dropped.msg_text = "$NOTIFY_AMMO_REVOLVER";
@@ -2825,10 +2871,13 @@ entity(vector org, string class, float ammount, entity ownr) drop_item =
 		dropped.oldtouch = dropped.touch;
 		
 	}
+
+	dropped.nextthink = time + 0.1;	// items start after other solids
+
 	if (class == "siphon")
 	{
 		dropped.scale = 1;
-		dropped.movetype = MOVETYPE_BOUNCE;
+		dropped.movetype = MOVETYPE_TOSS;
 		dropped.solid = SOLID_TRIGGER;
 		dropped.cnt = 1;
 		dropped.origin_z += 12;
@@ -2843,13 +2892,14 @@ entity(vector org, string class, float ammount, entity ownr) drop_item =
 		dropped.msg_text = "$NOTIFY_ARTIFACT_SIPHON";
 		dropped.touch = artifact_touch;
 		dropped.oldtouch = dropped.touch;
+		dropped.nextthink = time + 3;
 		
 	}
 
 	if (class == "apparatus")
 	{
 		dropped.scale = 1;
-		dropped.movetype = MOVETYPE_BOUNCE;
+		dropped.movetype = MOVETYPE_TOSS;
 		dropped.solid = SOLID_TRIGGER;
 		dropped.cnt = 1;
 		dropped.origin_z += 12;
@@ -2863,12 +2913,13 @@ entity(vector org, string class, float ammount, entity ownr) drop_item =
 		dropped.msg_text = "$NOTIFY_ARTIFACT_APPARATUS";
 		dropped.touch = artifact_touch;
 		dropped.oldtouch = dropped.touch;
+		dropped.nextthink = time + 3;
 		
 	}
 	if (class == "theter")
 	{
 		dropped.scale = 1;
-		dropped.movetype = MOVETYPE_BOUNCE;
+		dropped.movetype = MOVETYPE_TOSS;
 		dropped.solid = SOLID_TRIGGER;
 		dropped.cnt = 1;
 		dropped.origin_z += 12;
@@ -2883,13 +2934,13 @@ entity(vector org, string class, float ammount, entity ownr) drop_item =
 		dropped.msg_text = "$NOTIFY_SOULTETHER";
 		dropped.touch = artifact_touch;
 		dropped.oldtouch = dropped.touch;
-		
+		dropped.nextthink = time + 3;
 	}
 
 	if (class == "aegis")
 	{
 		dropped.scale = 1;
-		dropped.movetype = MOVETYPE_BOUNCE;
+		dropped.movetype = MOVETYPE_TOSS;
 		dropped.solid = SOLID_TRIGGER;
 		dropped.cnt = 1;
 		dropped.origin_z += 12;
@@ -2903,12 +2954,12 @@ entity(vector org, string class, float ammount, entity ownr) drop_item =
 		dropped.msg_text = "$NOTIFY_ARTIFACT_AEGIS";
 		dropped.touch = artifact_touch;
 		dropped.oldtouch = dropped.touch;
-		
+		dropped.nextthink = time + 3;
 	}
 	if (class == "attar")
 	{
 		dropped.scale = 1;
-		dropped.movetype = MOVETYPE_BOUNCE;
+		dropped.movetype = MOVETYPE_TOSS;
 		dropped.solid = SOLID_TRIGGER;
 		dropped.classname = "artifact_confounding_attar";
 		dropped.cnt = 1;
@@ -2923,11 +2974,12 @@ entity(vector org, string class, float ammount, entity ownr) drop_item =
 		dropped.msg_text = "$NOTIFY_ARTIFACT_ATTAR";
 		dropped.touch = artifact_touch;
 		dropped.oldtouch = dropped.touch;
+		dropped.nextthink = time + 3;		
 	}
 		if (class == "trinket")
 	{
 		dropped.scale = 1;
-		dropped.movetype = MOVETYPE_BOUNCE;
+		dropped.movetype = MOVETYPE_TOSS;
 		dropped.solid = SOLID_TRIGGER;
 		dropped.classname = "artifact_trinket_of_respite";
 		dropped.cnt = 1;
@@ -2942,11 +2994,13 @@ entity(vector org, string class, float ammount, entity ownr) drop_item =
 		dropped.msg_text = "$NOTIFY_ARTIFACT_DEFLECTION";
 		dropped.touch = artifact_touch;
 		dropped.oldtouch = dropped.touch;
+		dropped.nextthink = time + 3;
+		
 	}
 if (class == "mark")
 	{
 		dropped.scale = 1;
-		dropped.movetype = MOVETYPE_BOUNCE;
+		dropped.movetype = MOVETYPE_TOSS;
 		dropped.solid = SOLID_TRIGGER;
 		dropped.cnt = 1;
 		dropped.origin_z += 12;
@@ -2961,11 +3015,13 @@ if (class == "mark")
 		dropped.msg_text = "$NOTIFY_ARTIFACT_REVELATION";
 		dropped.touch = artifact_touch;
 		dropped.oldtouch = dropped.touch;
+		dropped.nextthink = time + 3;
+		
 	}
 	if (class == "flaskrage")
 	{
 		dropped.scale = 1;
-		dropped.movetype = MOVETYPE_BOUNCE;
+		dropped.movetype = MOVETYPE_TOSS;
 		dropped.solid = SOLID_TRIGGER;
 		dropped.cnt = 1;
 		dropped.origin_z += 12;
@@ -2980,12 +3036,14 @@ if (class == "mark")
 		dropped.msg_text = "$NOTIFY_ARTIFACT_RAGE";
 		dropped.touch = artifact_touch;
 		dropped.oldtouch = dropped.touch;
+		dropped.nextthink = time + 3;
+		
 	}
 
 	if (class == "grenade")
 	{
 		dropped.scale = 1;
-		dropped.movetype = MOVETYPE_BOUNCE;
+		dropped.movetype = MOVETYPE_TOSS;
 		dropped.solid = SOLID_TRIGGER;
 		dropped.classname = "artifact_void_grenade";
 		dropped.cnt = 1;
@@ -3000,12 +3058,14 @@ if (class == "mark")
 		dropped.msg_text = "$NOTIFY_ARTIFACT_GRENADE";
 		dropped.touch = artifact_touch;
 		dropped.oldtouch = dropped.touch;
+		dropped.nextthink = time + 3;
+		
 	}	
 
 	if (class == "vicious")
 	{
 		dropped.scale = 1;
-		dropped.movetype = MOVETYPE_BOUNCE;
+		dropped.movetype = MOVETYPE_TOSS;
 		dropped.solid = SOLID_TRIGGER;
 		dropped.classname = "artifact_vicious_idol";
 		dropped.cnt = 1;
@@ -3020,13 +3080,15 @@ if (class == "mark")
 		dropped.msg_text = "$NOTIFY_ARTIFACT_ANIMUS";
 		dropped.touch = artifact_touch;
 		dropped.oldtouch = dropped.touch;
+		dropped.nextthink = time + 3;
+		
 	}
 	if (class == "shockwave")
 	{
 		dropped.scale = 1;
-		dropped.movetype = MOVETYPE_BOUNCE;
+		dropped.movetype = MOVETYPE_TOSS;
 		dropped.solid = SOLID_TRIGGER;
-		dropped.classname = "artifact_ring_fire";
+		dropped.classname = "artifact_shockwave";
 		dropped.cnt = 1;
 		dropped.origin_z += 12;
 		dropped.noise = "items/artifacts/artifactJ_pickup.ogg";
@@ -3039,9 +3101,10 @@ if (class == "mark")
 		dropped.msg_text = "$NOTIFY_ARTIFACT_SHOCKWAVE";
 		dropped.touch = artifact_touch;
 		dropped.oldtouch = dropped.touch;
+		dropped.nextthink = time + 3;
+		
 	}
 
-	dropped.nextthink = time + 0.1;	// items start after other solids
 	dropped.think = check_item_onfloor;
 	
 	if (class == "shotgun")
@@ -3172,9 +3235,9 @@ void() mace_full_touch =
 	te_customflash(self.origin,other.ammo_bfg * 3.5,7,'3 0 0');
 
 	string snd = strcat ("weapons/mace/mace_absorb",ftos(other.ammo_bfg ),".ogg");
-	sound(other, CHAN_AUTO, snd, 0.7, ATTN_NORM);
-	if (other.ammo_bfg == 10)
-		sound(other, CHAN_AUTO,"weapons/mace/mace_unfold1.ogg", 1, ATTN_NORM);
+	sound(other, CHAN_AUTO, snd, 1, 0.25);
+	//if (other.ammo_bfg == 10)
+		sound(other, CHAN_AUTO,"weapons/mace/mace_unfold1.ogg", 1, 0.24);
 
 	stuffcmd (other,"pulseammo\n");
 	flash_screen_item(other);
@@ -3184,6 +3247,7 @@ void() mace_full_touch =
 		Hud_SendNotification(other, "soul", "$NOTIFY_AMMO_SOUL", HUDMSGFLAG::AGGREGATE);
 		m_ammo --;
 	}
+	SUB_UseTargets();
 	remove(self);
 };
 
@@ -3507,7 +3571,7 @@ void(vector org, string class, float ammount, entity slf) convert_to_item =
 	if (class == "siphon")
 	{
 		self.scale = 1;
-		self.movetype = MOVETYPE_BOUNCE;
+		self.movetype = MOVETYPE_TOSS;
 		self.solid = SOLID_TRIGGER;
 		self.cnt = 1;
 		self.origin_z += 12;
@@ -3522,13 +3586,15 @@ void(vector org, string class, float ammount, entity slf) convert_to_item =
 		self.msg_icon = "artifactF";
 		self.msg_text = "$NOTIFY_ARTIFACT_SIPHON";
 		self.touch = artifact_touch;
+		self.nextthink = time + 0.1;	// items start after other solids
+		self.think = check_item_onfloor;		
 	}
 
 
 	if (class == "mark")
 	{
 		self.scale = 1;
-		self.movetype = MOVETYPE_BOUNCE;
+		self.movetype = MOVETYPE_TOSS;
 		self.solid = SOLID_TRIGGER;
 		self.cnt = 1;
 		self.origin_z += 12;
@@ -3542,11 +3608,13 @@ void(vector org, string class, float ammount, entity slf) convert_to_item =
 		self.msg_icon = "artifactA";
 		self.msg_text = "$NOTIFY_ARTIFACT_REVELATION";
 		self.touch = artifact_touch;
+		self.nextthink = time + 0.1;	// items start after other solids
+		self.think = check_item_onfloor;		
 	}
 	if (class == "apparatus")
 	{
 		self.scale = 1;
-		self.movetype = MOVETYPE_BOUNCE;
+		self.movetype = MOVETYPE_TOSS;
 		self.solid = SOLID_TRIGGER;
 		self.cnt = 1;
 		self.origin_z += 12;
@@ -3560,11 +3628,13 @@ void(vector org, string class, float ammount, entity slf) convert_to_item =
 		self.msg_icon = "artifactB";
 		self.msg_text = "$NOTIFY_ARTIFACT_APPARATUS";
 		self.touch = artifact_touch;
+		self.nextthink = time + 0.1;	// items start after other solids
+		self.think = check_item_onfloor;		
 	}
 	if (class == "flaskrage")
 	{
 		self.scale = 1;
-		self.movetype = MOVETYPE_BOUNCE;
+		self.movetype = MOVETYPE_TOSS;
 		self.solid = SOLID_TRIGGER;
 		self.cnt = 1;
 		self.origin_z += 12;
@@ -3578,11 +3648,13 @@ void(vector org, string class, float ammount, entity slf) convert_to_item =
 		self.msg_icon = "artifactC";
 		self.msg_text = "$NOTIFY_ARTIFACT_RAGE";
 		self.touch = artifact_touch;
+		self.nextthink = time + 0.1;	// items start after other solids
+		self.think = check_item_onfloor;		
 	}
 	if (class == "attar")
 	{
 		self.scale = 1;
-		self.movetype = MOVETYPE_BOUNCE;
+		self.movetype = MOVETYPE_TOSS;
 		self.solid = SOLID_TRIGGER;
 		self.classname = "artifact_confounding_attar";
 		self.cnt = 1;
@@ -3596,11 +3668,13 @@ void(vector org, string class, float ammount, entity slf) convert_to_item =
 		self.msg_icon = "artifactD";
 		self.msg_text = "$NOTIFY_ARTIFACT_ATTAR";
 		self.touch = artifact_touch;
+		self.nextthink = time + 0.1;	// items start after other solids
+		self.think = check_item_onfloor;		
 	}
 	if (class == "grenade")
 	{
 		self.scale = 1;
-		self.movetype = MOVETYPE_BOUNCE;
+		self.movetype = MOVETYPE_TOSS;
 		self.solid = SOLID_TRIGGER;
 		self.classname = "artifact_void_grenade";
 		self.cnt = 1;
@@ -3614,11 +3688,13 @@ void(vector org, string class, float ammount, entity slf) convert_to_item =
 		self.msg_icon = "artifactE";
 		self.msg_text = "$NOTIFY_ARTIFACT_GRENADE";
 		self.touch = artifact_touch;
+		self.nextthink = time + 0.1;	// items start after other solids
+		self.think = check_item_onfloor;		
 	}	
 	if (class == "trinket")
 	{
 		self.scale = 1;
-		self.movetype = MOVETYPE_BOUNCE;
+		self.movetype = MOVETYPE_TOSS;
 		self.solid = SOLID_TRIGGER;
 		self.classname = "artifact_trinket_of_respite";
 		self.cnt = 1;
@@ -3632,11 +3708,13 @@ void(vector org, string class, float ammount, entity slf) convert_to_item =
 		self.msg_icon = "artifactG";
 		self.msg_text = "$NOTIFY_ARTIFACT_DEFLECTION";
 		self.touch = artifact_touch;
+		self.nextthink = time + 0.1;	// items start after other solids
+		self.think = check_item_onfloor;		
 	}	
 	if (class == "aegis")
 	{
 		self.scale = 1;
-		self.movetype = MOVETYPE_BOUNCE;
+		self.movetype = MOVETYPE_TOSS;
 		self.solid = SOLID_TRIGGER;
 		self.classname = "artifact_cruel_aegis";
 		self.cnt = 1;
@@ -3650,11 +3728,13 @@ void(vector org, string class, float ammount, entity slf) convert_to_item =
 		self.msg_icon = "artifactH";
 		self.msg_text = "$NOTIFY_ARTIFACT_AEGIS";
 		self.touch = artifact_touch;
+		self.nextthink = time + 0.1;	// items start after other solids
+		self.think = check_item_onfloor;		
 	}
 	if (class == "vicious")
 	{
 		self.scale = 1;
-		self.movetype = MOVETYPE_BOUNCE;
+		self.movetype = MOVETYPE_TOSS;
 		self.solid = SOLID_TRIGGER;
 		self.classname = "artifact_vicious_idol";
 		self.cnt = 1;
@@ -3668,13 +3748,15 @@ void(vector org, string class, float ammount, entity slf) convert_to_item =
 		self.msg_icon = "artifactI";
 		self.msg_text = "$NOTIFY_ARTIFACT_ANIMUS";
 		self.touch = artifact_touch;
+		self.nextthink = time + 0.1;	// items start after other solids
+		self.think = check_item_onfloor;		
 	}
 	if (class == "shockwave")
 	{
 		self.scale = 1;
-		self.movetype = MOVETYPE_BOUNCE;
+		self.movetype = MOVETYPE_TOSS;
 		self.solid = SOLID_TRIGGER;
-		self.classname = "artifact_ring_fire";
+		self.classname = "artifact_shockwave";
 		self.cnt = 1;
 		self.origin_z += 12;
 		self.noise = "items/artifacts/artifactJ_pickup.ogg";
@@ -3686,11 +3768,13 @@ void(vector org, string class, float ammount, entity slf) convert_to_item =
 		self.msg_icon = "artifactJ";
 		self.msg_text = "$NOTIFY_ARTIFACT_SHOCKWAVE";
 		self.touch = artifact_touch;
+		self.nextthink = time + 0.1;	// items start after other solids
+		self.think = check_item_onfloor;		
 	}
 	if (class == "theter")
 	{
 		self.scale = 1;
-		self.movetype = MOVETYPE_BOUNCE;
+		self.movetype = MOVETYPE_TOSS;
 		self.solid = SOLID_TRIGGER;
 		self.cnt = 1;
 		self.origin_z += 12;
@@ -3705,6 +3789,8 @@ void(vector org, string class, float ammount, entity slf) convert_to_item =
 		self.msg_icon = "soul_tether";
 		self.msg_text = "$NOTIFY_SOULTETHER";
 		self.touch = artifact_touch;
+		self.nextthink = time + 0.1;	// items start after other solids
+		self.think = check_item_onfloor;
 	}
 
 
@@ -3833,6 +3919,7 @@ void(vector org, string class, float ammount, entity slf) convert_to_item =
 		self.spawnflags = self.spawnflags;
 		self.classname = "weapon_crystal";
 		self.itemisweapon = 1;
+		self.noise  ="weapons/mace/mace_unfold1.ogg";
 		setmodel(self, "models/weapons/crystal/w_crystal.md3");
 		setsize(self, slag_nsize, slag_size);
 		precache_sound(self.noise);
@@ -3856,7 +3943,7 @@ void(vector org, string class, float ammount, entity slf) convert_to_item =
 
 		if(single_player.items & IT_MACE)
 			setmodel(self, "models/weapons/mace/w_mace_open.md3");
-
+		self.noise  ="weapons/mace/mace_unfold1.ogg";
 		setsize(self, slag_nsize, slag_size);
 		precache_sound(self.noise);
 		self.rwpn = 1;
@@ -3877,6 +3964,7 @@ void(vector org, string class, float ammount, entity slf) convert_to_item =
 		self.itemisweapon = 1;
 		setmodel(self, "models/weapons/mace/w_mace_open.md3");
 		setsize(self, slag_nsize, slag_size);
+		self.noise  ="weapons/mace/mace_unfold1.ogg";
 		precache_sound(self.noise);
 		self.rwpn = 1;
 		StartItem(1);

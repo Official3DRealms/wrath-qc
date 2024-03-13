@@ -2446,6 +2446,8 @@ void check_infinite_saves(void);
 void Toggle_Journal(void);
 void CMD_journal_close(void);
 void CMD_dmenu_close(void);
+void CMD_set_origin(string cmd);
+void CMD_set_angle(string cmd);
 void(string str) SV_ParseClientCommand =
 {
 
@@ -2557,6 +2559,16 @@ void(string str) SV_ParseClientCommand =
 	else if (cmd == "journal_close")
 	{
 		CMD_journal_close();
+		return;
+	}
+	else if (cmd == "set_origin") // Reki (March 4 2024): debug cmd to set your origin
+	{
+		CMD_set_origin(str);
+		return;
+	}
+	else if (cmd == "set_angles") // Reki (March 4 2024): debug cmd to set your origin
+	{
+		CMD_set_angle(str);
 		return;
 	}
 

@@ -602,10 +602,12 @@ void MenuInit_Main_Game(void)
 		container.m_click = button_click;
 }
 
+float controls_init_check;
 float steam_init_check;
 void MenuInit_Main(void)
 {
 	steam_init_check = cvar("steam_firsttime") ? FALSE : TRUE;
+	controls_init_check = cvar("controls_firsttime") ? FALSE : TRUE;
 
 	void(uielement_c this) menu_reinit = {
 		uipicture_c resumebutton = (uipicture_c)this.partner;
@@ -1928,6 +1930,9 @@ void MenuInit_Options_Binds(void)
 		if (!ui_renderframe)
 			return;
 		
+		if (key_waitingforinput >= 3)
+			key_waitingforinput--;
+
 		if (key_waitingforinput == 2)
 		{
 			Run_Reinit_List(menu_options_keybinds);
@@ -2107,6 +2112,9 @@ void MenuInit_Options_Binds(void)
 		
 		if (!nkey)
 			return FALSE;
+
+		if (nkey < K_TAB) // some invalid key
+			return FALSE;
 		
 		if (!currentbind_button)
 			return FALSE;
@@ -2134,6 +2142,7 @@ void MenuInit_Options_Binds(void)
 			if (!IS_KBM_KEY(keynumtype))
 				continue;
 			
+			setkeybind_bindmap(keynum, "", 0);
 			cmd("in_unbind 0 ", keynumtostring(keynum), "\n");
 		}
 		
@@ -2149,7 +2158,7 @@ void MenuInit_Options_Binds(void)
 			currentbind_button.key_bind.key = nkey;
 		}
 
-		key_waitingforinput = 2;
+		key_waitingforinput = FALSE;
 		Run_Reinit_List(menu_options_keybinds);
 
 		// ugh, I was trying to avoid this but it seems like some race condition makes
@@ -3205,6 +3214,7 @@ void MenuInit_Options_Resolution(void)
 			cmd(sprintf("set vid_height %g\n", resolution_to_apply[1]));
 			cmd(sprintf("set vid_fullscreen %g\n", fullscreen_to_apply));
 			cmd("set vid_desktopfullscreen 0\n");
+			cmd("set scr_loadingscreen_mapname \"\"\n");
 			cmd("vid_restart\n");
 
 			cmd(sprintf("set vid_conwidth %g\n", resolution_to_apply[0]/2));
@@ -3217,6 +3227,7 @@ void MenuInit_Options_Resolution(void)
 			cmd(sprintf("set vid_height %g\n", res[1]));
 			cmd(sprintf("set vid_fullscreen %g\n", 1));
 			cmd("set vid_desktopfullscreen 1\n");
+			cmd("set scr_loadingscreen_mapname \"\"\n");
 			cmd("vid_restart\n");
 
 			cmd(sprintf("set vid_conwidth %g\n", res[0]/2));
@@ -3226,6 +3237,7 @@ void MenuInit_Options_Resolution(void)
 		if (flags_to_apply & 8)
 		{
 			cmd(sprintf("set prvm_language %s\n", language_to_apply));
+			cmd("set scr_loadingscreen_mapname \"\"\n");
 			cmd("menu_restart\ntogglemenu\n");
 		}
 
@@ -5010,6 +5022,17 @@ void menu_anydraw(void)
 				cmd("menu_restart\ntogglemenu\n");
 			}
 		}
+	}
+	//
+
+	// Reki (February 28 2024): Only exec gamebuttons.cfg on first time setup
+	if (controls_init_check)
+	{
+		cmd("exec gamebuttons.cfg\n");
+		cmd("exec wrath.cfg\n"); // lets not blow away anyone's config... this will basically do the same behavior as the bug has anyway.
+		cmd("seta controls_firsttime 1\n"); // we should only do this once (unless wrath.cfg gets blown away at some point)
+		cmd("saveconfig\n");
+		controls_init_check = FALSE;
 	}
 	//
 

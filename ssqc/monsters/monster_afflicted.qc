@@ -777,7 +777,12 @@ void() cystthink = { if (self.owner.health < 0)
 };
 
 void() Afflicted_Fire = { if (self.health <= 0)
+	{
+		self.heretic_suicide = 1;
+		sound(self, CHAN_AUTO, "enemies/afflicted/explode.ogg", 1, 0.125);
+		Killed(self, world, 1);
 		return;
+	}
 	local vector org;
 	local float tagindex;
 	monstersound1("enemies/stricken/cyst", 3, CHAN_AUTO);

@@ -1364,6 +1364,9 @@ void() invader_diea3 =[$inv_deatha3, invader_diea4] {};
 void() invader_diea4 =[$inv_deatha4, invader_diea5]
 {
 	decal_monster2(self.origin + '0 0 12');
+	self.think = invader_diea5;
+	self.nextthink = time + 0.1;
+
 };
 void() invader_diea5 =[$inv_deatha5, invader_diea6] {};
 void() invader_diea6 =[$inv_deatha6, invader_diea7] {};
@@ -1383,6 +1386,9 @@ void() invader_dieb3 =[$inv_deathb3, invader_dieb4] {};
 void() invader_dieb4 =[$inv_deathb4, invader_dieb5]
 {
 	decal_monster2(self.origin + '0 0 12');
+	self.think = invader_dieb5;
+	self.nextthink = time + 0.1;
+
 };
 void() invader_dieb5 =[$inv_deathb5, invader_dieb6] {};
 void() invader_dieb6 =[$inv_deathb6, invader_dieb7] {};
@@ -1402,6 +1408,9 @@ void() invader_diec3 =[$inv_deathc3, invader_diec4] {};
 void() invader_diec4 =[$inv_deathc4, invader_diec5]
 {
 	decal_monster2(self.origin + '0 0 12');
+	self.think = invader_diec5;
+	self.nextthink = time + 0.1;
+
 };
 void() invader_diec5 =[$inv_deathc5, invader_diec6] {};
 void() invader_diec6 =[$inv_deathc6, invader_diec7] {};
@@ -1420,6 +1429,8 @@ void() invader_died3 =[$inv_deathd3, invader_died4] {};
 void() invader_died4 =[$inv_deathd4, invader_died5]
 {
 	decal_monster2(self.origin + '0 0 12');
+	self.think = invader_died5;
+	self.nextthink = time + 0.1;
 };
 void() invader_died5 =[$inv_deathd5, invader_died6] {};
 void() invader_died6 =[$inv_deathd6, invader_died7] {};

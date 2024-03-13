@@ -1034,8 +1034,8 @@ void() trigger_fog_prethink =
 
 
 	local string lmessage;
-	lmessage =strcat ((ftos(self.tmp_fog_g)),("\n")) ;
-	bprint (lmessage);
+//	lmessage =strcat ((ftos(self.tmp_fog_g)),("\n")) ;
+//	bprint (lmessage);
 
 	self.cnt = self.wait / 0.025; 
 
@@ -1055,8 +1055,8 @@ void() trigger_fog_prethink =
 	self.r_fog_h = (self.nfogh - self.tmp_fog_h) / (self.cnt);
 	self.r_fog_f = (self.nfogf - self.tmp_fog_f) / (self.cnt);
 
-	lmessage =strcat ((ftos(self.r_fog_g)),("\n")) ;
-	bprint (lmessage);
+//	lmessage =strcat ((ftos(self.r_fog_g)),("\n")) ;
+//	bprint (lmessage);
 
 	self.think = trigger_fog_think;
 
@@ -1066,8 +1066,8 @@ void() trigger_fog_prethink =
 	else
 		self.nextthink = time +0.025;
 
-	lmessage =strcat (("secomd step"),("\n")) ;
-	bprint (lmessage);
+//	lmessage =strcat (("secomd step"),("\n")) ;
+//	bprint (lmessage);
 
 };
 	
@@ -1087,8 +1087,8 @@ void() trigger_fog_touch =
 	self.touch = SUB_Null;
 
 	local string lmessage;
-	lmessage =strcat (("first step"),("\n")) ;
-	bprint (lmessage);
+//	lmessage =strcat (("first step"),("\n")) ;
+//	bprint (lmessage);
 
 	self.think = trigger_fog_prethink;
 	self.nextthink = time + 0.05;

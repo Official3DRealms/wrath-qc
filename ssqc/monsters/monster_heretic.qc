@@ -488,7 +488,10 @@ void() heretic_checkfloor =
 
 
 
-void() heretic_flyup1 =[$her_run1, heretic_flyup2] {ai_face();};
+void() heretic_flyup1 =[$her_run1, heretic_flyup2] {ai_face();
+
+check_redinvulnerability();
+};
 void() heretic_flyup2 =[$her_run2, heretic_flyup3] {ai_face();};
 void() heretic_flyup3 =[$her_run3, heretic_flyup4] {ai_face();};
 void() heretic_flyup4 =[$her_run4, heretic_flyup5] {ai_face();};
@@ -577,6 +580,7 @@ void() heretic_srun7
 };
 void() heretic_srun6
 {
+	check_redinvulnerability();
 	if(self.soundlenghtchase < time)
 	{
 		self.soundlenghtchase = time + 5.9;
@@ -787,6 +791,7 @@ void() heretic_run7 =[$her_run7, heretic_run8]
 };
 void() heretic_run8 =[$her_run8, heretic_run9]
 {
+	check_redinvulnerability();
 	ai_runwalk(heretic_rs);
 	heretic_checkrun();
 };

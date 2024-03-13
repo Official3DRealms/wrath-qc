@@ -2413,6 +2413,7 @@ void() Hud = { vector postimage;
 float dmues;
 
 //string v_sfps;
+float autocvar_scr_nohud;
 float vshift_alreadychecked;
 vector locked_viewangle;
 vector view_origin;
@@ -2614,6 +2615,13 @@ local vector angulos, origen;
 	renderscene();
 
 
+	float fdev = cvar ("developer");
+	float fcamera_stage = cvar ("camera_stage");
+	if((fdev >= 1) && (hidehud == 3) &&(fcamera_stage > 0)) 
+	{
+		drawstring('0 0 0', strcat("camera stage: ",""), '16 16 0', '1 1 1', 1, 0);
+		drawstring('0 0 0', strcat("              ",ftos(fcamera_stage)), '16 16 0', '1 1 0', 1, 0);
+	}
 	if (vid_height == 540)
 		aspectratiomode = 1;
 	if (vid_height == 720)
@@ -3190,6 +3198,9 @@ local vector angulos, origen;
 			
 			ui_hud.alpha = slerp(0, 1, hud_alpha);
 			ui_hud.alpha = round(ui_hud.alpha * HUDALPHA_STEPS) / HUDALPHA_STEPS;
+
+			if (autocvar_scr_nohud == 1)
+				ui_hud.alpha = 0;
 			//
 
 			ui_clipsize = '0 0';

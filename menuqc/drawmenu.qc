@@ -153,18 +153,18 @@ void()write_totalprofileslot_updatedversion;
 
  	if (localmenuversion != menuversion)
 	{
-	write_totalprofileslot_updatedversion();
-	cmd("unbind f2\n");
-	cmd("unbind f3\n");
-	cmd("unbind f4\n");
-	cmd("unbind f5\n");
-	cmd("unbind f6\n");
-	cmd("unbind f7\n");
-	cmd("unbind f8\n");
-	cmd("unbind f9\n");
-	cmd("unbind f10\n");
-	cmd("unbindall\n");
-	cmd("exec gamebuttons.cfg\n");
+		write_totalprofileslot_updatedversion();
+		cmd("unbind f2\n");
+		cmd("unbind f3\n");
+		cmd("unbind f4\n");
+		cmd("unbind f5\n");
+		cmd("unbind f6\n");
+		cmd("unbind f7\n");
+		cmd("unbind f8\n");
+		cmd("unbind f9\n");
+		cmd("unbind f10\n");
+		cmd("unbindall\n");
+		cmd("exec gamebuttons.cfg\n");
 	}
  	local float writeparms;
  	local string writethis;

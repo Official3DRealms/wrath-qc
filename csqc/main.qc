@@ -61,6 +61,8 @@ void CSQC_Init(void)
 	registercommand(CLIENTCOMMAND_FORCEDONOR);
 	registercommand(CLIENTCOMMAND_LISTENTITIES);
 	registercommand(CLIENTCOMMAND_REMOVEBYCLASSNAME);
+	registercommand(CLIENTCOMMAND_SET_ORIGIN);
+	registercommand(CLIENTCOMMAND_SET_ANGLES);
 	registercvar ("_fog_d",ftos(getproperty(VF_FOG_DENSITY)));
 	registercvar("_fog_color",vtos(getpropertyvec(VF_FOG_COLOR)));
 	//registercvar ("_fog_r",ftos(getproperty(VF_FOG_COLOR_R)));
@@ -307,6 +309,8 @@ float CSQC_ConsoleCommand(string strMessage)
 		case CLIENTCOMMAND_REMOVEALL:
 		case CLIENTCOMMAND_LISTENTITIES:
 		case CLIENTCOMMAND_REMOVEBYCLASSNAME:
+		case CLIENTCOMMAND_SET_ORIGIN:
+		case CLIENTCOMMAND_SET_ANGLES:
 		localcmd("cmd ", strMessage, "\n");
 		break;			
 		case CLIENTCOMMAND_GET_FOG:

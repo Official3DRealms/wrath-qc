@@ -653,6 +653,7 @@ void(entity ent) SetViewPoint =
 void()deactivate_camera =
 {
 	single_player.vhud = 0;
+	localcmd("set camera_stage 0\n");
 	SetViewPoint(single_player);
 };
 
@@ -711,41 +712,54 @@ void()camera_controller_think =
 	float nexttime;
 
 	self.count ++;
+	float dev = cvar("developer");
 	if(self.count == 1)
 	{
 		camera_velocity = self.owner.velocity1;
 		camera_avelocity = self.owner.avelocity1;
 		nexttime =  self.owner.wait1;
+		if (dev == 1)
+			localcmd("set camera_stage 1\n");
 	}
 	else if(self.count == 2)
 	{
 		camera_velocity = self.owner.velocity2;
 		camera_avelocity = self.owner.avelocity2;
 		nexttime =  self.owner.wait2;
+		if (dev == 1)
+			localcmd("set camera_stage 2\n");
 	}
 	else if(self.count == 3)
 	{
 		camera_velocity = self.owner.velocity3;
 		camera_avelocity = self.owner.avelocity3;
 		nexttime = self.owner.wait3;
+		if (dev == 1)
+			localcmd("set camera_stage 3\n");
 	}
 	else if(self.count == 4)
 	{
 		camera_velocity = self.owner.velocity4;
 		camera_avelocity = self.owner.avelocity4;
 		nexttime = self.owner.wait4;
+		if (dev == 1)
+			localcmd("set camera_stage 4\n");
 	}
 	else if(self.count == 5)
 	{
 		camera_velocity = self.owner.velocity5;
 		camera_avelocity = self.owner.avelocity5;
 		nexttime = self.owner.wait5;
+		if (dev == 1)
+			localcmd("set camera_stage 5\n");
 	}
 	else if(self.count == 6)
 	{
 		camera_velocity = self.owner.velocity6;
 		camera_avelocity = self.owner.avelocity6;
 		nexttime = self.owner.wait6;
+		if (dev == 1)
+			localcmd("set camera_stage 6\n");
 	}
 	else
 	{
@@ -753,7 +767,7 @@ void()camera_controller_think =
 		remove(self);
 		return;
 	}
-	
+
 	self.owner.velocity = camera_velocity;
 	self.owner.avelocity = camera_avelocity;
 	self.think	= camera_controller_think;

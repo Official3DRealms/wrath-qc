@@ -990,7 +990,6 @@ void() Weapon_Sfire =
 	float checked7;
 	checked7 = cvar("saved4");
 
-
 	if (self.weapon == IT_MELEE)
 	{
 		w_melee_charge();
@@ -1072,7 +1071,7 @@ void() Weapon_Sfire =
 			achievement_onlybladeandmace = FALSE;
 		}
 	}
-	else if ((self.weapon == IT_CANNON)&& (self.time_fire_shotgun < time))
+	else if ((self.weapon == IT_CANNON)&& (self.time_fire_cannon < time))
 	{
 		if (self.ammo_cannon < 5)
 		{
@@ -1461,6 +1460,7 @@ void() raise_weapon =
 		self.vweaponskin = 0;
 		raise_vmodel();
 	}
+	//stuffcmd(self, "-button3\n");	
 };
 void() pick_up_melee;
 .float hasmelee;
@@ -1525,6 +1525,7 @@ void() W_ChangeWeapon =
 	self.weapon = fl;
 	self.lastweapon = oldweapon;
 	self.rlastweapon = oldweapon;
+
 	if (oldweapon == IT_MELEE)
 		lower_melee();
 	if (oldweapon == IT_SHOTGUN)
@@ -3000,6 +3001,7 @@ void() WeaponFrames =
 	{
 		sound7(self, CHAN_AUTO, "items/artifacts/artifactA_pickup.ogg", 0.2, 0.25,200,0);
 		self.impulse = 0;
+		recount_monsters();
 	}
 
 	if((time > pingtimerefresh) && (self.journal == 1) && (deathmatch == 1))

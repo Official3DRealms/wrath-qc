@@ -13,6 +13,7 @@ float autocvar_cl_bobmodel;
 float autocvar_cl_viewmodel_scale;
 float autocvar_cl_leanmodel;
 float autocvar_cl_followmodel;
+float autocvar_fov;
 
 vector viewmodel_angles;
 vector viewmodel_origin;
@@ -225,6 +226,13 @@ void Viewmodel_CalculateMovement(void)
 
 	gunorg += viewmodel_origin;
 	gunangs += viewmodel_angles;
+
+	// fov compensation :/
+	if (autocvar_fov > 100)
+	{
+		float frac = min((autocvar_fov - 100) / 30, 1);
+		gunorg += v_forward * -2.5 * frac;
+	}
 
 	setproperty(VF_VIEWMODEL_ORIGIN, gunorg);
 	setproperty(VF_VIEWMODEL_ANGLES, gunangs);

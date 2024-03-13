@@ -14,15 +14,21 @@ void() check_relics =
     self.local_classmonster = self.classmonster1;
 	local entity pl;
 	pl = find(world, classname, "player");
-	if (!pl.oldrelics)
+
+	float plrelics = pl.oldrelics;
+
+	if(skill >= 3)
+		plrelics = 4;
+
+	if (!plrelics)
 		return;
-	if (pl.oldrelics == 1)
+	if (plrelics == 1)
 		self.local_classmonster = self.classmonster2;
-	if (pl.oldrelics == 2)
+	if (plrelics == 2)
 		self.local_classmonster = self.classmonster3;
-	if (pl.oldrelics == 3)
+	if (plrelics == 3)
 		self.local_classmonster = self.classmonster4;
-	if (pl.oldrelics >= 4)
+	if (plrelics >= 4)
 		self.local_classmonster = self.classmonster5;
 
     /*float dev = cvar ("developer");
@@ -101,37 +107,38 @@ void() recount_monsters =
 
 	local entity spawner;
 	spawner = nextent(world);
+	float plrelics = pl.oldrelics;
+
+	if(skill >= 3)
+		plrelics = 4;
+
 	while (spawner)
 	{
 		entity holder = nextent(spawner);
 		if (spawner.wrathflags &FL_SPAWNER)
 		{
 		local float m_counter = spawner.count;
-			if (pl.oldrelics >= 4)
+			if (plrelics >= 4)
 			{
 				if (spawner.classmonster5 > 0)
 					total_monsters = total_monsters + m_counter;
-			}			if (pl.oldrelics == 4)
-			{
-				if (spawner.classmonster5 > 0)
-					total_monsters = total_monsters + m_counter;
-			}
-			if (pl.oldrelics == 3)
+			}			
+			if (plrelics == 3)
 			{
 				if (spawner.classmonster4 > 0)
 					total_monsters = total_monsters + m_counter;
 			}
-			if (pl.oldrelics == 2)
+			if (plrelics == 2)
 			{
 				if (spawner.classmonster3 > 0)
 					total_monsters = total_monsters + m_counter;
 			}
-			if (pl.oldrelics == 1)
+			if (plrelics == 1)
 			{
 				if (spawner.classmonster2 > 0)
 					total_monsters = total_monsters + m_counter;
 			}
-			if (!pl.oldrelics)
+			if (!plrelics)
 			{
 				if (spawner.classmonster1 > 0)
 					total_monsters = total_monsters + m_counter;

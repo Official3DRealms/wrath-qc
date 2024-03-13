@@ -153,7 +153,7 @@ void() Player_Die = {
 	self.nextthink = time;
 	self.playerdeadtime = time + 100000000;
 	self.deadflag = DEAD_DEAD;
-	self.deadwaiting = time + 0.2;
+	self.deadwaiting = time + 0.3;
 	self.r_healthhaze = 0.4;
 	self.journal = 0;
 	self.rmenu = 0;
@@ -218,6 +218,7 @@ void() PlayerDeathThink = { local float forward;
 
 	if (self.deadwaiting > time)
 		self.deadmenuflag = 0;
+
 	else
 		self.deadmenuflag = 1;
 
@@ -3264,6 +3265,33 @@ void() loopedsoundsymbol_think =
 };
 void() fixitems;
 void soundbox_initializeambients(void);
+
+void()check_item_onfloor;
+.float rwpn;
+void() check_artifacts_physics =
+{
+	entity stuckartifact = nextent(world);
+	while (stuckartifact)	
+	{
+		entity holder = nextent(stuckartifact);
+		if(((stuckartifact.classname == "artifact_ring_fire")
+		||(stuckartifact.classname == "artifact_drowners_apparatus")
+		||(stuckartifact.classname == "artifact_trinket_of_respite")
+		||(stuckartifact.classname == "artifact_void_grenade")
+		||(stuckartifact.classname == "artifact_vicious_idol")
+		||(stuckartifact.classname == "artifact_cruel_aegis")
+		||(stuckartifact.classname == "artifact_confounding_attar")
+		||(stuckartifact.classname == "artifact_flaskrage")
+		||(stuckartifact.classname == "artifact_life_siphon")
+		||(stuckartifact.classname == "artifact_mark_revelation")) &&(stuckartifact.rwpn != 3))
+		{
+			stuckartifact.think = check_item_onfloor;
+			stuckartifact.nextthink = time + 3;
+		}
+		stuckartifact = holder;	
+	}
+
+};
 void() RestoreGame = 
 {
 	FLASKRAGECOLOR_x = 1;
@@ -3278,6 +3306,7 @@ void() RestoreGame =
 
 	stuffcmd(self, "scratch3 a\n");
 	stuffcmd(self, "freelook 1\n");
+	if ((cvar("custom_m_yaw") != 1))
 	stuffcmd(self, "m_yaw 0.022\n");
 
 	// Reki (February 14 2024)
@@ -3321,7 +3350,7 @@ void() RestoreGame =
 	entity volumecontroller = spawn();
 	volumecontroller.think = volumecontrollerthink;
 	volumecontroller.nextthink = time + 0.55;
-
+	check_artifacts_physics();
 	soundbox_initializeambients();
 	sigils_initializeambients();
 	entity loopedsoundsymbol = nextent(world);
@@ -3414,6 +3443,20 @@ void() RestoreGame =
 			fixed_door.touch = door_preuse;
 		}
 	}
+
+	float tetherlimit;
+
+		tetherlimit = 10000;
+	if(skill == 2)
+		tetherlimit = 9;
+	if(skill == 3)
+		tetherlimit = 3;
+
+
+
+	if ((self.SoulTether >= tetherlimit) && (skill >= 2))
+		self.SoulTether = tetherlimit;
+
 	//stuffcmd(self, "bf 0 0 0 1.25 0.5\n");
 	if (cvar("cvar_restoregame") == 2)
 	{
@@ -3737,14 +3780,43 @@ void() check_spotted_maps =
 	}
 
 };
+void CMD_set_origin(string cmd)
+{
+	if !(autocvar_developer)
+		return;
+
+	float argc = tokenize_console(cmd);
+	if (argc < 4)
+	{
+		sprint(self, vtos(self.origin), "\n");
+		return;
+	}
+	if !(self.flags & FL_CLIENT)
+		return;
+	setorigin(self, [stof(argv(1)), stof(argv(2)), stof(argv(3))]);
+}
+void CMD_set_angle(string cmd)
+{
+	if !(autocvar_developer)
+		return;
+
+	float argc = tokenize_console(cmd);
+	if (argc < 3)
+	{
+		sprint(self, vtos(self.angles), "\n");
+		return;
+	}
+	if !(self.flags & FL_CLIENT)
+		return;
+	self.angles = [stof(argv(1)), stof(argv(2)), 0];
+	self.fixangle = TRUE;
+}
+
+
 .float interior;
 .float chan8_vol;
 .float chan9_vol;
 .float interior_time;
-
-
-
-
 
 void() object_fakecoffer;
 void() PutClientInServer = {
@@ -3842,6 +3914,8 @@ void() PutClientInServer = {
 	stuffcmd(self, "scratch3 1\n");
 	stuffcmd(self, "v_idlescale 0 \n");
 	stuffcmd(self, "freelook 1\n");
+
+	if ((cvar("custom_m_yaw") != 1))
 	stuffcmd(self, "m_yaw 0.022\n");
 	//stuffcmd(self, "r_glsl_saturation 1\n");
 	self.r_saturation = 1;

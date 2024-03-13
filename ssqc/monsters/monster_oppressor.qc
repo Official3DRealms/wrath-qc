@@ -157,6 +157,7 @@ void() oppressor_runtattck1;
 void() oppressor_run1 =[$opp_run1, oppressor_run2]
 {	
 	ai_runwalk(opp_wvel);		
+	check_redinvulnerability();
 };
 void() oppressor_run2 =[$opp_run2, oppressor_run3]{ai_runwalk(opp_wvel);
 
@@ -517,6 +518,8 @@ void() oppressor_attack =
 			self.velocity += ' 0 0 1';
 		}
 	}
+
+	check_redinvulnerability();
 	if(self.oppressor_attack_a == 1)
 		self.think = oppressor_attackb1;
 	else
