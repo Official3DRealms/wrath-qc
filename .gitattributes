@@ -1,0 +1,5 @@
+* text=auto
+
+*.h text eol=crlf
+*.qc text eol=crlf
+ 
